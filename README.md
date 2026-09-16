@@ -13,6 +13,8 @@ O objetivo não é ranquear instituições. É expor que as fontes disponíveis 
 
 Ambos são HTML autocontido. Sem dependências, sem build, sem instalação. Abre no navegador.
 
+Acesse o Dashboard aqui: https://thaynapfreire.github.io/analise-consumidor-bancos/
+
 ## Achado principal
 
 O Nubank aparece em 13º de 15 no ranking do Banco Central, 1º em volume no Consumidor.gov.br e com a melhor reputação entre os grandes no Reclame Aqui, no mesmo semestre.
