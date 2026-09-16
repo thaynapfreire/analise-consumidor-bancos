@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Análise de Dados do consumidor de Bancos Brasileiros</title>
+<style>
+:root{
+  --bg:#F7F7FB;
+  --white:#FFFFFF;
+  --line:#ECECF3;
+  --ink:#16162B;
+  --muted:#8A8AA3;
+  --muted2:#5B5B77;
+  --purple:#6D4EE6;
+  --purple-soft:#F0ECFE;
+  --green:#15A05C;
+  --green-soft:#E6F8EF;
+  --red:#E5484D;
+  --red-soft:#FDECEC;
+  --amber:#B4690E;
+  --amber-soft:#FDF3E3;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--muted2);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  font-size:14px;line-height:1.6;
+}
+.app{display:flex;min-height:100vh;}
+
+/* ---------- sidebar ---------- */
+.side{
+  width:232px;flex-shrink:0;background:var(--white);
+  border-right:1px solid var(--line);padding:22px 16px;
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px 26px;}
+.logo{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(135deg,#7B5CF0,#5B3FD6);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:700;
+}
+.brand b{color:var(--ink);font-size:16px;font-weight:700;letter-spacing:-.2px;}
+.navitem{
+  display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;
+  color:var(--muted2);font-size:13.5px;cursor:pointer;margin-bottom:2px;
+  border:none;background:none;width:100%;text-align:left;font-family:inherit;
+  transition:background .12s;
+}
+.navitem:hover{background:#F7F7FB;}
+.navitem.on{background:var(--purple-soft);color:var(--purple);font-weight:600;}
+.navitem .ic{width:16px;text-align:center;font-size:13px;opacity:.85;}
+.sidefoot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;align-items:center;gap:10px;}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#9B8AF5,#6D4EE6);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.sidefoot .nm{font-size:13px;color:var(--ink);font-weight:600;line-height:1.3;}
+.sidefoot .rl{font-size:11.5px;color:var(--muted);}
+
+/* ---------- topbar ---------- */
+.main{flex:1;min-width:0;}
+.top{
+  background:var(--white);border-bottom:1px solid var(--line);
+  padding:13px 30px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:20;
+}
+.crumb{font-size:13px;color:var(--muted);}
+.content{padding:30px;max-width:1240px;}
+
+/* ---------- page head ---------- */
+.pagehead{margin-bottom:26px;}
+h1{font-size:25px;color:var(--ink);font-weight:700;letter-spacing:-.5px;line-height:1.25;}
+.pagehead p{font-size:13.5px;color:var(--muted);margin-top:7px;}
+.pagehead p .s{display:block;}
+.pagehead p,.panelnote,p.t,.ins p,.dnote,ul.li li,.warn p,.srcp{
+  text-align:justify;text-justify:inter-word;hyphens:auto;max-width:none;
+}
+.pagehead p .s,.panelnote .s,p.t .s,.dnote .s{display:block;}
+.stat .v small,.card .meta{text-align:justify;text-justify:inter-word;}
+table td,table th,.bar-lbl,.bar-v,.kpi .v,.drow,.maphint{text-align:initial;}
+td.n,td.r,th.r{text-align:right;}
+.bar-lbl{text-align:right;}
+
+/* ---------- kpis ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px;}
+.kpi{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;}
+.kpi .hd{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:14px;}
+.kpi .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.kpi .v{font-size:27px;font-weight:700;color:var(--ink);letter-spacing:-.8px;line-height:1.1;}
+.kpi .sub{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;}
+.pill{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.pill.g{background:#EFECFD;color:#4A2FB8;}
+.pill.r{background:#4A2FB8;color:#FFFFFF;}
+.pill.a{background:var(--amber-soft);color:var(--amber);}
+.pill.p{background:var(--purple-soft);color:var(--purple);}
+
+/* ---------- panel ---------- */
+.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:22px;}
+.panelhead{display:flex;align-items:center;gap:14px;margin-bottom:6px;flex-wrap:wrap;}
+.panelhead h2{font-size:17px;color:var(--ink);font-weight:700;letter-spacing:-.2px;}
+.panelnote{font-size:12.5px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.chips{margin-left:auto;display:flex;gap:4px;background:var(--bg);padding:3px;border-radius:9px;}
+.chip{border:none;background:none;font-family:inherit;font-size:12.5px;color:var(--muted);
+  padding:6px 13px;border-radius:7px;cursor:pointer;}
+.chip.on{background:var(--white);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(20,20,45,.07);}
+h3{font-size:14px;color:var(--ink);font-weight:650;margin:24px 0 10px;}
+h3:first-child{margin-top:0;}
+p.t{font-size:13px;color:var(--muted2);margin-bottom:12px;}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;
+   letter-spacing:.4px;padding:0 12px 10px;border-bottom:1px solid var(--line);}
+td{padding:11px 12px;border-bottom:1px solid var(--line);color:var(--muted2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+td.k{color:var(--ink);font-weight:600;}
+td.n{color:var(--ink);font-weight:600;text-align:right;font-variant-numeric:tabular-nums;}
+td.r{text-align:right;font-variant-numeric:tabular-nums;}
+th.r{text-align:right;}
+
+/* ---------- bars ---------- */
+.bar-row{display:grid;grid-template-columns:180px 1fr 62px;gap:14px;align-items:center;margin-bottom:8px;}
+.bar-lbl{font-size:12.5px;color:var(--ink);text-align:right;}
+.bar-tr{background:var(--bg);border-radius:20px;height:20px;overflow:hidden;}
+.bar-fl{height:20px;background:#8B72EE;border-radius:20px;transition:background .15s;}
+.bar-fl.hot{background:#4A2FB8;}
+.bar-fl.ok{background:#C4BAF9;}
+.bar-row.dim .bar-fl{background:#E2DDFB;}
+.bar-row.dim .bar-lbl,.bar-row.dim .bar-v{color:var(--muted);}
+.bar-row.sel .bar-lbl{font-weight:650;color:var(--purple);}
+.bar-v{font-size:12.5px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;}
+.leg{display:flex;gap:20px;font-size:11.5px;color:var(--muted);margin-top:14px;}
+.sw{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:6px;}
+
+/* ---------- grids ---------- */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;}
+.card .ico{width:32px;height:32px;border-radius:9px;background:var(--purple-soft);
+  display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:12px;}
+.card h4{font-size:14px;color:var(--ink);font-weight:650;line-height:1.35;margin-bottom:4px;}
+.card .meta{font-size:11.5px;color:var(--muted);margin-bottom:14px;}
+.stat{background:var(--bg);border-radius:10px;padding:11px 13px;margin-bottom:8px;}
+.stat .l{font-size:11px;color:var(--muted);}
+.stat .v{font-size:15px;color:var(--ink);font-weight:650;margin-top:1px;}
+.stat .v small{font-size:11.5px;color:var(--muted);font-weight:400;display:block;line-height:1.45;margin-top:3px;}
+.g2s{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mk{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.5px;padding:1px 6px;border-radius:5px;margin-right:5px;
+  vertical-align:1px;white-space:nowrap;}
+.mk-p{background:#EFECFD;color:#4A2FB8;}
+.mk-d{background:#4A2FB8;color:#FFFFFF;}
+.mk-q{background:var(--amber-soft);color:var(--amber);}
+
+/* ---------- insight ---------- */
+.ins{background:var(--bg);border-radius:12px;padding:16px 18px;margin-bottom:12px;
+     border-left:3px solid var(--purple);}
+.ins h4{font-size:13.5px;color:var(--ink);font-weight:650;margin-bottom:5px;}
+.ins p{font-size:12.5px;color:var(--muted2);}
+
+.warn{background:var(--amber-soft);border-radius:12px;padding:15px 18px;margin-bottom:16px;}
+.warn p{font-size:12.5px;color:#6B4408;}
+.warn b{color:#4A2E04;}
+
+.gapx{display:inline-block;background:var(--bg);border:1px solid var(--line);
+  border-radius:6px;padding:2px 8px;font-size:11px;color:var(--muted);font-weight:500;}
+
+ul.li{padding-left:18px;}
+ul.li li{font-size:12.5px;color:var(--muted2);margin-bottom:9px;}
+a{color:var(--purple);text-decoration:none;word-break:break-all;}
+a:hover{text-decoration:underline;}
+.page{display:none;}
+.page.on{display:block;}
+
+.mapwrap{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start;margin-top:8px;}
+.mapsvg{width:100%;height:auto;display:block;}
+.reg{cursor:pointer;stroke:#FFFFFF;stroke-width:1.5;transition:opacity .15s;}
+.reg:hover{opacity:.78;}
+.reg.sel{stroke:#2A1670;stroke-width:2.5;}
+.reglbl{font-size:11px;fill:#FFFFFF;font-weight:600;pointer-events:none;
+  font-family:inherit;text-anchor:middle;}
+.maphint{font-size:11.5px;color:var(--muted);margin-top:10px;text-align:center;}
+.detail{background:var(--bg);border-radius:12px;padding:18px 20px;}
+.detail .dh{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.detail .dh b{font-size:15px;color:var(--ink);font-weight:650;}
+.detail .reset{margin-left:auto;background:var(--white);border:1px solid var(--line);
+  border-radius:8px;padding:5px 12px;font-size:12px;color:var(--muted2);
+  font-family:inherit;cursor:pointer;}
+.detail .reset:hover{border-color:var(--purple);color:var(--purple);}
+.drow{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
+.drow:last-of-type{border-bottom:none;}
+.drow .dl{font-size:12.5px;color:var(--muted2);}
+.drow .dv{margin-left:auto;font-size:15px;color:var(--ink);font-weight:650;
+  font-variant-numeric:tabular-nums;}
+.dnote{font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--line);text-align:justify;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="side">
+  <div class="brand"><div class="logo">AD</div><b>Análise de Dados</b></div>
+  <button class="navitem on" data-go="visao"><span class="ic">◧</span>Visão geral</button>
+  <button class="navitem" data-go="bacen"><span class="ic">◈</span>Banco Central</button>
+  <button class="navitem" data-go="cgov"><span class="ic">◇</span>Consumidor.gov.br</button>
+  <button class="navitem" data-go="ra"><span class="ic">◆</span>Reclame Aqui</button>
+  <button class="navitem" data-go="cruz"><span class="ic">⧉</span>Cruzamento</button>
+  <button class="navitem" data-go="credito"><span class="ic">▤</span>Perfil de crédito</button>
+  <button class="navitem" data-go="personas"><span class="ic">◉</span>Personas</button>
+  <button class="navitem" data-go="fontes"><span class="ic">≡</span>Limitações e fontes</button>
+  <div class="sidefoot">
+    <div class="avatar">3</div>
+    <div><div class="nm">Três fontes públicas</div><div class="rl">Bacen, Consumidor.gov, RA</div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="top">
+    <span class="crumb" id="crumb">Visão geral</span>
+  </div>
+
+  <div class="content">
+
+  <!-- ============ VISÃO GERAL ============ -->
+  <div class="page on" id="visao">
+    <div class="pagehead">
+      <h1>Análise de Dados do consumidor de Bancos Brasileiros</h1>
+      <p><span class="s">Retrato do atrito entre pessoa física e instituição financeira</span><span class="s">Duas fontes oficiais e uma privada, lidas em paralelo, sem escolher um lado quando elas divergem</span></p>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <div class="hd">Convergência de temas</div>
+        <div class="row"><span class="v">3 de 3</span><span class="pill g">alinhado</span></div>
+        <div class="sub">Os três temas mais reclamados são os mesmos nas duas fontes oficiais: cartão, consignado e crédito pessoal. Só a ordem muda.</div>
+      </div>
+      <div class="kpi">
+        <div class="hd">Divergência entre fontes</div>
+        <div class="row"><span class="v">3,96 / 8,7</span><span class="pill r">conflito</span></div>
+        <div class="sub">A nota do Nubank no Consumidor.gov.br e no Reclame Aqui, na mesma escala de 10, no mesmo período.</div>
+      </div>
+      <div class="kpi">
+        <div class="hd">Peso do setor financeiro</div>
+        <div class="row"><span class="v">61,8%</span><span class="pill a">+6,9 p.p.</span></div>
+        <div class="sub">das reclamações no Consumidor.gov.br entre janeiro e julho de 2026. Era 54,9% no mesmo período de 2025.</div>
+      </div>
+      <div class="kpi">
+        <div class="hd">Dívida no cartão</div>
+        <div class="row"><span class="v">52,8 mi</span><span class="pill r">+55%</span></div>
+        <div class="sub">de brasileiros tinham dívida no cartão em dezembro de 2024, alta de 55% em quatro anos.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>O achado principal</h2><span class="pill p">leitura central</span></div>
+      <p class="panelnote">Se você olhar uma fonte só, vai sair com uma conclusão firme e provavelmente errada.</p>
+      <div class="ins">
+        <h4>As três fontes não apontam os mesmos bancos</h4>
+        <p>O Nubank é o caso extremo. Aparece em 13º de 15 no ranking do Banco Central, com um dos menores índices de reclamação procedente. É o 1º em volume no Consumidor.gov.br em junho de 2026. E tem a melhor reputação entre os grandes no Reclame Aqui. As três leituras são defensáveis dentro das respectivas metodologias, o que significa que a metodologia, e não o banco, está produzindo o resultado.</p>
+      </div>
+      <div class="ins">
+        <h4>Nenhuma fonte pública liga reclamação a perfil demográfico</h4>
+        <p>O ranking do Banco Central não publica idade, gênero ou região. O Consumidor.gov.br não publica quebra demográfica por instituição ou tema. O Reclame Aqui declara que dados do reclamante não vão para terceiros. Todo recorte de perfil deste material vem de dados de uso de crédito, não de reclamação.</p>
+      </div>
+      <div class="ins">
+        <h4>O atrito está no crédito, não no atendimento</h4>
+        <p>Os temas líderes nas duas fontes oficiais são todos operações de crédito. Isso desloca o diagnóstico: o problema nasce no produto e na cobrança, não na jornada de suporte.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BACEN ============ -->
+  <div class="page" id="bacen">
+    <div class="pagehead">
+      <h1>Banco Central</h1>
+      <p><span class="s">Duas bases distintas</span><span class="s">O Ranking de Reclamações é trimestral, conta apenas queixas procedentes e normaliza por milhão de clientes</span><span class="s">O Registro de Demandas do Cidadão é anual e mede volume bruto de acessos ao canal</span><span class="s">Elas não devem ser somadas</span></p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Ranking de reclamações</h2>
+        <div class="chips">
+          <button class="chip on" data-tri="t1">1º tri 2026</button>
+          <button class="chip" data-tri="t2">2º tri 2026</button>
+        </div>
+      </div>
+      <p class="panelnote"><span class="s">Índice igual a reclamações procedentes por milhão de clientes</span><span class="s">Quanto maior, mais queixa proporcional à base</span><span class="s">Este número não diz qual banco é bom ou ruim, diz qual concentra mais reclamação com fundamento regulatório em relação ao próprio tamanho</span></p>
+
+      <div id="t1">
+        <div class="bar-row"><div class="bar-lbl">Banco C6</div><div class="bar-tr"><div class="bar-fl hot" style="width:100%"></div></div><div class="bar-v">55,30</div></div>
+        <div class="bar-row"><div class="bar-lbl">Bradesco</div><div class="bar-tr"><div class="bar-fl hot" style="width:88.5%"></div></div><div class="bar-v">48,92</div></div>
+        <div class="bar-row"><div class="bar-lbl">BTG Pactual e Banco Pan</div><div class="bar-tr"><div class="bar-fl hot" style="width:77.4%"></div></div><div class="bar-v">42,81</div></div>
+        <div class="bar-row"><div class="bar-lbl">PicPay</div><div class="bar-tr"><div class="bar-fl hot" style="width:67.3%"></div></div><div class="bar-v">37,22</div></div>
+        <div class="bar-row"><div class="bar-lbl">Inter</div><div class="bar-tr"><div class="bar-fl hot" style="width:63.0%"></div></div><div class="bar-v">34,86</div></div>
+        <div class="bar-row"><div class="bar-lbl">Santander</div><div class="bar-tr"><div class="bar-fl" style="width:62.4%"></div></div><div class="bar-v">34,49</div></div>
+        <div class="bar-row"><div class="bar-lbl">Itaú</div><div class="bar-tr"><div class="bar-fl" style="width:61.7%"></div></div><div class="bar-v">34,12</div></div>
+        <div class="bar-row"><div class="bar-lbl">Neon Pagamentos</div><div class="bar-tr"><div class="bar-fl" style="width:55.2%"></div></div><div class="bar-v">30,55</div></div>
+        <div class="bar-row"><div class="bar-lbl">Mercado Pago</div><div class="bar-tr"><div class="bar-fl" style="width:54.7%"></div></div><div class="bar-v">30,26</div></div>
+        <div class="bar-row"><div class="bar-lbl">PagSeguro</div><div class="bar-tr"><div class="bar-fl" style="width:50.3%"></div></div><div class="bar-v">27,83</div></div>
+        <div class="bar-row"><div class="bar-lbl">Caixa Econômica Federal</div><div class="bar-tr"><div class="bar-fl" style="width:41.8%"></div></div><div class="bar-v">23,12</div></div>
+        <div class="bar-row"><div class="bar-lbl">Banco do Brasil</div><div class="bar-tr"><div class="bar-fl" style="width:35.0%"></div></div><div class="bar-v">19,36</div></div>
+        <div class="bar-row"><div class="bar-lbl">Nu Pagamentos</div><div class="bar-tr"><div class="bar-fl ok" style="width:19.3%"></div></div><div class="bar-v">10,65</div></div>
+        <div class="bar-row"><div class="bar-lbl">99Pay</div><div class="bar-tr"><div class="bar-fl ok" style="width:17.2%"></div></div><div class="bar-v">9,51</div></div>
+        <div class="bar-row"><div class="bar-lbl">CloudWalk</div><div class="bar-tr"><div class="bar-fl ok" style="width:12.1%"></div></div><div class="bar-v">6,67</div></div>
+        <div class="leg">
+          <span><span class="sw" style="background:#4A2FB8"></span>Cinco maiores índices</span>
+          <span><span class="sw" style="background:#8B72EE"></span>Faixa intermediária</span>
+          <span><span class="sw" style="background:#C4BAF9"></span>Três menores índices</span>
+        </div>
+      </div>
+
+      <div id="t2" style="display:none">
+        <p class="t">O Banco Central divulgou o 2º trimestre de 2026 em 23 de julho. A liderança mudou. O que foi publicado até aqui são as posições, não a tabela completa de índices por instituição.</p>
+        <table>
+          <thead><tr><th>Posição</th><th>Instituição</th><th class="r">Reclamações procedentes</th></tr></thead>
+          <tbody>
+            <tr><td class="n" style="text-align:left">1º</td><td class="k">Bradesco</td><td class="n">9.375</td></tr>
+            <tr><td class="n" style="text-align:left">2º</td><td class="k">Banco C6</td><td class="r"><span class="gapx">não publicado</span></td></tr>
+            <tr><td class="n" style="text-align:left">3º</td><td class="k">Itaú</td><td class="r"><span class="gapx">não publicado</span></td></tr>
+            <tr><td class="n" style="text-align:left">8º</td><td class="k">Banco do Brasil</td><td class="r"><span class="gapx">não publicado</span></td></tr>
+            <tr><td class="n" style="text-align:left">11º</td><td class="k">Caixa Econômica Federal</td><td class="r"><span class="gapx">não publicado</span></td></tr>
+          </tbody>
+        </table>
+        <p class="t" style="margin-top:12px;">As queixas mais frequentes seguem ligadas a integridade, segurança e sigilo das operações, com concentração em cartão de crédito, e na sequência crédito consignado.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Volume absoluto conta outra história</h3>
+      <table>
+        <thead><tr><th>Instituição</th><th class="r">Procedentes</th><th class="r">Clientes</th><th class="r">Índice</th><th class="r">Posição</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Bradesco</td><td class="r">5.398</td><td class="r">110.328.071</td><td class="n">48,92</td><td class="r">2º</td></tr>
+          <tr><td class="k">Caixa Econômica Federal</td><td class="r">3.659</td><td class="r">158.194.617</td><td class="n">23,12</td><td class="r">11º</td></tr>
+          <tr><td class="k">Itaú</td><td class="r">3.442</td><td class="r">100.863.694</td><td class="n">34,12</td><td class="r">7º</td></tr>
+          <tr><td class="k">Banco C6</td><td class="r">1.898</td><td class="r">34.326.775</td><td class="n">55,30</td><td class="r">1º</td></tr>
+          <tr><td class="k">Nu Pagamentos</td><td class="r">1.223</td><td class="r">114.737.784</td><td class="n">10,65</td><td class="r">13º</td></tr>
+        </tbody>
+      </table>
+      <p class="t" style="margin-top:12px;">O Bradesco lidera em volume bruto e fica em 2º no índice. O C6 tem menos de um terço das reclamações do Bradesco em número absoluto e lidera o ranking. Sem normalizar pela base de clientes, a leitura se inverte.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Temas mais reclamados nos canais do Banco Central, 2024</h3>
+      <div class="bar-row"><div class="bar-lbl">Crédito consignado</div><div class="bar-tr"><div class="bar-fl" style="width:100%"></div></div><div class="bar-v">63.051</div></div>
+      <div class="bar-row"><div class="bar-lbl">Cartão de crédito</div><div class="bar-tr"><div class="bar-fl" style="width:83.1%"></div></div><div class="bar-v">52.377</div></div>
+      <div class="bar-row"><div class="bar-lbl">Empréstimos e crédito pessoal</div><div class="bar-tr"><div class="bar-fl" style="width:40.0%"></div></div><div class="bar-v">25.249</div></div>
+      <div class="bar-row"><div class="bar-lbl">Conta de pagamento pré-paga</div><div class="bar-tr"><div class="bar-fl" style="width:36.1%"></div></div><div class="bar-v">22.754</div></div>
+      <div class="bar-row"><div class="bar-lbl">Pix</div><div class="bar-tr"><div class="bar-fl" style="width:30.2%"></div></div><div class="bar-v">19.034</div></div>
+      <div class="bar-row"><div class="bar-lbl">Conta corrente</div><div class="bar-tr"><div class="bar-fl" style="width:29.7%"></div></div><div class="bar-v">18.751</div></div>
+
+      <h3>O que esta fonte não responde</h3>
+      <p class="t">O ranking conta apenas reclamações procedentes, descartando a insatisfação que não configura descumprimento de norma. O acesso exige tentativa prévia com a instituição e passa por internet, telefone 145 ou correspondência, o que filtra quem não conhece o rito. E nenhum dado demográfico do reclamante é publicado.</p>
+    </div>
+  </div>
+
+  <!-- ============ CONSUMIDOR.GOV ============ -->
+  <div class="page" id="cgov">
+    <div class="pagehead">
+      <h1>Consumidor.gov.br</h1>
+      <p><span class="s">Plataforma da Secretaria Nacional do Consumidor</span><span class="s">Mede volume registrado, taxa de resposta, índice de solução autodeclarado e nota de satisfação</span><span class="s">Critérios diferentes dos do Banco Central, portanto os números não são comparáveis entre as duas fontes</span></p>
+    </div>
+
+    <div class="g2">
+      <div class="panel" style="margin-bottom:0">
+        <h3>Cinco temas de serviços financeiros mais reclamados</h3>
+        <p class="t">Ordem estável desde 2018, segundo compilação publicada pelo próprio Banco Central.</p>
+        <table>
+          <thead><tr><th>#</th><th>Tema</th><th class="r">Volume</th></tr></thead>
+          <tbody>
+            <tr><td class="n" style="text-align:left">1</td><td class="k">Cartão de crédito, débito e de loja</td><td class="r"><span class="gapx">sem quebra por tema</span></td></tr>
+            <tr><td class="n" style="text-align:left">2</td><td>Crédito consignado</td><td class="r"><span class="gapx">sem quebra por tema</span></td></tr>
+            <tr><td class="n" style="text-align:left">3</td><td>Crédito pessoal e demais empréstimos</td><td class="r"><span class="gapx">sem quebra por tema</span></td></tr>
+            <tr><td class="n" style="text-align:left">4</td><td>Pagamento online, celular ou maquininha</td><td class="r"><span class="gapx">sem quebra por tema</span></td></tr>
+            <tr><td class="n" style="text-align:left">5</td><td>Conta corrente, salário e poupança</td><td class="r"><span class="gapx">sem quebra por tema</span></td></tr>
+          </tbody>
+        </table>
+        <p class="t" style="margin-top:12px;">O crédito pessoal alcançou o consignado em percentual de reclamações no período, refletindo o salto de uso do produto. O segmento de bancos, financeiras e administradoras de cartão somou cerca de 150 mil reclamações na plataforma em 2024, queda de 28% frente a 2023.</p>
+      </div>
+
+      <div class="panel" style="margin-bottom:0">
+        <h3>Responder não é resolver</h3>
+        <p class="t">Indicadores por instituição, junho de 2026 salvo indicação.</p>
+        <table>
+          <thead><tr><th>Instituição</th><th class="r">Reclamações</th><th class="r">Solução</th><th class="r">Nota</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Nubank</td><td class="r">22.772</td><td class="n">21,6%</td><td class="n">1,98</td></tr>
+            <tr><td class="k">Banco do Brasil</td><td class="r">16.132</td><td class="n">31,6%</td><td class="r"><span class="gapx">sem dado</span></td></tr>
+            <tr><td class="k">Santander</td><td class="r"><span class="gapx">sem dado</span></td><td class="n">77,5%</td><td class="r"><span class="gapx">sem dado</span></td></tr>
+          </tbody>
+        </table>
+        <p class="t" style="margin-top:12px;">O Nubank respondeu todas as reclamações de junho e resolveu pouco mais de um quinto dos casos avaliados. O índice vinha subindo, era 12,6% em janeiro de 2026, mas o volume cresceu 47,6% no mesmo semestre. O Santander seguiu o caminho oposto, caindo de cerca de 82,4% para 77,5% na comparação anual.</p>
+        <div class="warn" style="margin-top:14px;margin-bottom:0">
+          <p><b>Detalhe metodológico que muda tudo:</b> reclamações finalizadas sem avaliação do consumidor contam como resolvidas. Qualquer percentual acima de 70% precisa ser lido com esse filtro.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:22px">
+      <h3>O que esta fonte não responde</h3>
+      <p class="t">Só entram empresas que aderem voluntariamente. O registro exige conta gov.br e acesso digital, o que enviesa a amostra para um público mais jovem e urbano. E o resolvido é percepção do consumidor, não verificação técnica. Nenhuma quebra demográfica por instituição ou por tema é publicada.</p>
+    </div>
+  </div>
+
+  <!-- ============ RECLAME AQUI ============ -->
+  <div class="page" id="ra">
+    <div class="pagehead">
+      <h1>Reclame Aqui</h1>
+      <p><span class="s">Plataforma privada, de adesão voluntária pela empresa e com modelo de negócio baseado em serviços vendidos às próprias empresas avaliadas</span><span class="s">Não exige tentativa prévia de resolução, não filtra por procedência regulatória e não publica base de clientes</span></p>
+    </div>
+
+    <div class="warn">
+      <p><b>Como estes dados foram obtidos:</b> apenas conteúdo público já indexado, sem coleta automatizada das páginas da plataforma, em respeito aos termos de uso. Isso limita a cobertura a quatro instituições, contra quinze no ranking do Banco Central.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Reputação e indicadores</h2><span class="pill p">lente de contraste</span></div>
+      <p class="panelnote">Período de 1º de março a 31 de agosto de 2026, salvo indicação.</p>
+      <table>
+        <thead><tr><th>Instituição</th><th class="r">Reputação</th><th class="r">Nota do consumidor</th><th class="r">Reclamações</th><th class="r">Tempo médio de resposta</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Nubank</td><td class="n">8,7 / 10</td><td class="r"><span class="gapx">não capturado</span></td><td class="r">57.044</td><td class="r">4 dias e 11 horas</td></tr>
+          <tr><td class="k">Banco Itaú</td><td class="n">8,1 / 10</td><td class="r"><span class="gapx">não capturado</span></td><td class="r">19.214</td><td class="r"><span class="gapx">não capturado</span></td></tr>
+          <tr><td class="k">Banco Bradesco</td><td class="n">6,8 / 10</td><td class="n">5,59</td><td class="r">10.566</td><td class="r">8 dias e 1 hora</td></tr>
+          <tr><td class="k">Banco Santander</td><td class="n">5,7 / 10</td><td class="n">4,27</td><td class="r">10.648</td><td class="r">7 dias</td></tr>
+        </tbody>
+      </table>
+      <div class="warn" style="margin-top:16px;margin-bottom:0">
+        <p><b>Atenção ao denominador:</b> os números de Bradesco e Santander são de reclamações avaliadas pelo consumidor nos seis meses. Os de Nubank e Itaú vêm do contador geral da página, cuja janela não ficou explícita na consulta. Não são grandezas comparáveis entre si e não devem ser lidas como ranking de volume.</p>
+      </div>
+
+      <h3>Reputação das quatro instituições capturadas</h3>
+      <div class="bar-row"><div class="bar-lbl">Nubank</div><div class="bar-tr"><div class="bar-fl ok" style="width:87%"></div></div><div class="bar-v">8,7</div></div>
+      <div class="bar-row"><div class="bar-lbl">Banco Itaú</div><div class="bar-tr"><div class="bar-fl ok" style="width:81%"></div></div><div class="bar-v">8,1</div></div>
+      <div class="bar-row"><div class="bar-lbl">Banco Bradesco</div><div class="bar-tr"><div class="bar-fl" style="width:68%"></div></div><div class="bar-v">6,8</div></div>
+      <div class="bar-row"><div class="bar-lbl">Banco Santander</div><div class="bar-tr"><div class="bar-fl hot" style="width:57%"></div></div><div class="bar-v">5,7</div></div>
+    </div>
+
+    <div class="panel">
+      <h3>Gênero, idade e região: não existem</h3>
+      <p class="t">O Reclame Aqui declara que os dados do reclamante não são repassados a terceiros, apenas à empresa reclamada. Não há recorte público de gênero, faixa etária ou região por empresa. O único material regional localizado é uma apresentação institucional de 2016, sobre comércio eletrônico, sem relação com o setor bancário, descartado por idade e por escopo.</p>
+      <p class="t"><b>Com isso o quadro se fecha:</b> nenhuma das três fontes publica demografia de quem reclama. O que existe é demografia de quem usa crédito, do Banco Central. Essa lacuna não é deste material, é do ecossistema de dados público brasileiro.</p>
+
+      <h3>O que esta fonte não responde</h3>
+      <p class="t">Sem base de clientes publicada, não há como normalizar, então o volume do Reclame Aqui não é comparável ao índice do Banco Central. A nota de reputação pondera taxa e velocidade de resposta, não só resolução, o que favorece quem responde rápido. E há um conflito estrutural que precisa ser dito: a plataforma vende serviços de reputação e selos às mesmas empresas que avalia. Isso não invalida os dados, mas significa que eles não têm o mesmo estatuto de um registro regulatório.</p>
+    </div>
+  </div>
+
+  <!-- ============ CRUZAMENTO ============ -->
+  <div class="page" id="cruz">
+    <div class="pagehead">
+      <h1>Cruzamento das três fontes</h1>
+      <p><span class="s">Os números das colunas não podem ser somados nem ranqueados juntos</span><span class="s">O que o cruzamento permite comparar é a ordem de prioridade e a divergência entre fontes</span></p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Os ofensores não são os mesmos</h2><span class="pill r">divergência</span></div>
+      <p class="panelnote"><span class="s">Esta foi a pergunta que motivou incluir a terceira fonte</span><span class="s">A resposta é direta: não, as três fontes não apontam os mesmos bancos</span><span class="s">Em alguns casos apontam o oposto</span></p>
+      <table>
+        <thead><tr><th>Instituição</th><th>Banco Central</th><th>Consumidor.gov.br</th><th>Reclame Aqui</th><th>Leitura</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="k">Nubank</td>
+            <td>13º de 15 no 1º tri, índice 10,65</td>
+            <td>1º em volume com 22.772, solução 21,6%, nota 1,98 de 5</td>
+            <td>Melhor reputação entre os grandes, 8,7 de 10</td>
+            <td><span class="pill r">oposição total</span></td>
+          </tr>
+          <tr>
+            <td class="k">Bradesco</td>
+            <td>1º lugar no 2º tri, 9.375 procedentes</td>
+            <td>Entre as mais reclamadas em abril de 2026</td>
+            <td>6,8 de 10, nota 5,59, resposta em 8 dias</td>
+            <td><span class="pill g">convergência</span></td>
+          </tr>
+          <tr>
+            <td class="k">Santander</td>
+            <td>6º no 1º tri, índice 34,49</td>
+            <td>Solução caiu de 82,4% para 77,5%</td>
+            <td>Pior reputação capturada, 5,7 de 10</td>
+            <td><span class="pill g">convergência</span></td>
+          </tr>
+          <tr>
+            <td class="k">Itaú</td>
+            <td>3º lugar no 2º tri</td>
+            <td><span class="gapx">sem dado</span></td>
+            <td>8,1 de 10, segunda melhor</td>
+            <td><span class="pill a">divergência parcial</span></td>
+          </tr>
+          <tr>
+            <td class="k">C6, PicPay e Inter</td>
+            <td>Top 5 do 1º tri por índice</td>
+            <td><span class="gapx">sem dado</span></td>
+            <td><span class="gapx">sem dado</span></td>
+            <td><span class="gapx">sem base</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>O caso Nubank, em uma linha</h3>
+      <p class="t">Normalizando as escalas, a nota do Nubank equivale a 3,96 de 10 no Consumidor.gov.br e a 8,7 de 10 no Reclame Aqui, no mesmo semestre. Ao mesmo tempo, o banco tem um dos menores índices de reclamação procedente do Banco Central. As três leituras são defensáveis dentro das respectivas metodologias, o que significa que a metodologia, e não o banco, está produzindo o resultado. Qualquer produto que exiba uma dessas notas isoladamente estará transmitindo verdade parcial como se fosse completa.</p>
+      <p class="t"><b>Hipóteses para a divergência, nenhuma confirmada:</b> a nota do Reclame Aqui pondera velocidade e taxa de resposta, e o Nubank responde em 4 dias e 11 horas contra 8 dias do Bradesco. O Consumidor.gov.br mede resolução declarada, onde o Nubank converte 21,6%. E o Banco Central só conta o que configura descumprimento de norma, filtro que remove a maior parte do volume. São três perguntas diferentes, não três respostas para a mesma pergunta.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Ordem de prioridade dos temas</h2><span class="pill p">só fontes oficiais</span></div>
+      <p class="panelnote"><span class="s">O Reclame Aqui não publica ranking agregado de temas por instituição</span><span class="s">O que aparece nas páginas são reclamações individuais, insuficientes para construir um ranking sem incorrer em amostragem por conveniência</span></p>
+      <div class="g2">
+        <div class="card">
+          <div class="ico">◈</div>
+          <h4>Banco Central</h4>
+          <div class="meta">Registro de Demandas do Cidadão, 2024</div>
+          <div class="stat"><div class="l">1º lugar</div><div class="v">Crédito consignado <small>63.051 registros</small></div></div>
+          <div class="stat"><div class="l">2º lugar</div><div class="v">Cartão de crédito <small>52.377 registros</small></div></div>
+          <div class="stat" style="margin-bottom:0"><div class="l">3º lugar</div><div class="v">Empréstimos e crédito pessoal <small>25.249 registros</small></div></div>
+        </div>
+        <div class="card">
+          <div class="ico">◇</div>
+          <h4>Consumidor.gov.br</h4>
+          <div class="meta">Serviços financeiros, série 2018 a 2024</div>
+          <div class="stat"><div class="l">1º lugar</div><div class="v">Cartão de crédito, débito e de loja</div></div>
+          <div class="stat"><div class="l">2º lugar</div><div class="v">Crédito consignado</div></div>
+          <div class="stat" style="margin-bottom:0"><div class="l">3º lugar</div><div class="v">Crédito pessoal e demais empréstimos</div></div>
+        </div>
+      </div>
+      <p class="t" style="margin-top:18px;"><b>Os três temas são idênticos, a ordem é que muda.</b> Consignado lidera no Banco Central, cartão lidera no Consumidor.gov.br. A hipótese mais provável é viés de canal: cada público reclama onde consegue chegar.</p>
+      <table style="margin-top:14px">
+        <thead><tr><th>Indicador</th><th class="r">Valor</th><th>O que sugere</th></tr></thead>
+        <tbody>
+          <tr><td>Pessoas com 60 anos ou mais que usam internet</td><td class="n">59%</td><td>Público do consignado tem menos acesso ao canal digital</td></tr>
+          <tr><td>Pessoas com 60 anos ou mais que usam Pix com frequência</td><td class="n">43,9%</td><td>Menor familiaridade com fluxo digital em geral</td></tr>
+          <tr><td>Clientes de fintechs acima de 60 anos</td><td class="n">9%</td><td>Contra 20% nos bancos tradicionais, esse público está no banco de agência</td></tr>
+          <tr><td>Clientes de fintechs até 34 anos</td><td class="n">44%</td><td>Contra 34% nos bancos tradicionais, público do cartão é mais jovem e digital</td></tr>
+        </tbody>
+      </table>
+      <p class="t" style="margin-top:12px;">Esta é uma inferência construída pelo cruzamento, <b>não é uma afirmação publicada pelo Banco Central</b>.</p>
+    </div>
+  </div>
+
+  <!-- ============ CRÉDITO ============ -->
+  <div class="page" id="credito">
+    <div class="pagehead">
+      <h1>Quem carrega o crédito no Brasil</h1>
+      <p><span class="s">Nenhuma das três fontes publica demografia de quem reclama</span><span class="s">O que existe é demografia de quem usa crédito, do Banco Central, base de dezembro de 2024</span><span class="s">As personas são construídas sobre esses dados, o que envolve um passo de inferência</span></p>
+    </div>
+
+    <div class="g2">
+      <div class="panel" style="margin-bottom:0">
+        <h3>Inadimplência por perfil</h3>
+        <p class="t"><span class="s">Percentual de clientes com ativos problemáticos</span><span class="s">A média nacional é de 16%</span></p>
+
+        <div id="grp-idade">
+          <div class="bar-row" data-nat="1"><div class="bar-lbl">18 a 34 anos</div><div class="bar-tr"><div class="bar-fl hot" style="width:100%"></div></div><div class="bar-v">19%</div></div>
+          <div class="bar-row" data-nat="1"><div class="bar-lbl">35 a 60 anos</div><div class="bar-tr"><div class="bar-fl" style="width:84.2%"></div></div><div class="bar-v">16%</div></div>
+          <div class="bar-row" data-nat="1"><div class="bar-lbl">Acima de 60 anos</div><div class="bar-tr"><div class="bar-fl ok" style="width:47.4%"></div></div><div class="bar-v">9%</div></div>
+        </div>
+
+        <div id="grp-regiao" style="margin-top:18px">
+          <div class="bar-row" data-reg="norte"><div class="bar-lbl">Região Norte</div><div class="bar-tr"><div class="bar-fl hot" style="width:100%"></div></div><div class="bar-v">19%</div></div>
+          <div class="bar-row" data-reg="nordeste"><div class="bar-lbl">Região Nordeste</div><div class="bar-tr"><div class="bar-fl" style="width:89.5%"></div></div><div class="bar-v">17%</div></div>
+          <div class="bar-row" data-reg="sudeste"><div class="bar-lbl">Região Sudeste</div><div class="bar-tr"><div class="bar-fl" style="width:84.2%"></div></div><div class="bar-v">16%</div></div>
+          <div class="bar-row" data-reg="centrooeste"><div class="bar-lbl">Região Centro Oeste</div><div class="bar-tr"><div class="bar-fl" style="width:84.2%"></div></div><div class="bar-v">16%</div></div>
+          <div class="bar-row" data-reg="sul"><div class="bar-lbl">Região Sul</div><div class="bar-tr"><div class="bar-fl ok" style="width:73.7%"></div></div><div class="bar-v">14%</div></div>
+        </div>
+
+        <div id="grp-cad" style="margin-top:18px">
+          <div class="bar-row" data-nat="1"><div class="bar-lbl">Inscritos no CadÚnico</div><div class="bar-tr"><div class="bar-fl hot" style="width:94.7%"></div></div><div class="bar-v">18%</div></div>
+          <div class="bar-row" data-nat="1"><div class="bar-lbl">Não inscritos</div><div class="bar-tr"><div class="bar-fl ok" style="width:73.7%"></div></div><div class="bar-v">14%</div></div>
+        </div>
+
+        <h3>Mapa por região</h3>
+        <p class="t"><span class="s">Clique em uma região para ver os indicadores dela</span><span class="s">A intensidade do roxo representa a inadimplência</span></p>
+
+        <div class="mapwrap">
+          <div>
+            <svg class="mapsvg" viewBox="0 0 300 345" role="img" aria-label="Mapa esquemático das cinco regiões do Brasil">
+              <polygon class="reg" data-reg="norte" fill="#4A2FB8" points="30,70 90,40 150,45 185,70 190,130 160,175 70,175 35,140"></polygon>
+              <polygon class="reg" data-reg="nordeste" fill="#6D4EE6" points="185,70 240,75 270,120 265,165 230,195 190,190 160,175 190,130"></polygon>
+              <polygon class="reg" data-reg="centrooeste" fill="#8B72EE" points="110,175 160,175 190,190 195,245 135,255 105,220"></polygon>
+              <polygon class="reg" data-reg="sudeste" fill="#8B72EE" points="190,190 230,195 245,225 235,265 195,270 195,245"></polygon>
+              <polygon class="reg" data-reg="sul" fill="#C4BAF9" points="135,255 195,270 190,315 140,320 115,290"></polygon>
+              <text class="reglbl" x="108" y="115">Norte</text>
+              <text class="reglbl" x="214" y="135">Nordeste</text>
+              <text class="reglbl" x="149" y="214">C. Oeste</text>
+              <text class="reglbl" x="216" y="234">Sudeste</text>
+              <text class="reglbl" x="156" y="292" fill="#3C3489">Sul</text>
+            </svg>
+            <div class="maphint">Mapa esquemático, sem precisão cartográfica</div>
+          </div>
+
+          <div class="detail">
+            <div class="dh">
+              <b id="d-nome">Brasil</b>
+              <span class="pill p" id="d-tag">visão nacional</span>
+              <button class="reset" id="d-reset">Limpar seleção</button>
+            </div>
+            <div class="drow"><span class="dl">Inadimplência</span><span class="dv" id="d-inad">16%</span></div>
+            <div class="drow"><span class="dl">Comprometimento de renda</span><span class="dv" id="d-comp">24,7%</span></div>
+            <div class="drow"><span class="dl">Limite de crédito utilizado</span><span class="dv" id="d-lim">21,6%</span></div>
+            <div class="dnote" id="d-note"><span class="s">Valores nacionais do Banco Central, base de dezembro de 2024</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:0">
+        <h3>Quantas pessoas usam cada produto</h3>
+        <p class="t">Em milhões de clientes, dezembro de 2024, com a variação desde 2020.</p>
+        <table>
+          <thead><tr><th>Modalidade</th><th class="r">Clientes</th><th class="r">Variação</th><th class="r">Taxa média</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Dívida no cartão</td><td class="n">52,8 mi</td><td class="r"><span class="pill r">+55%</span></td><td class="r">430,1% a.a.</td></tr>
+            <tr><td class="k">Crédito pessoal</td><td class="n">41,7 mi</td><td class="r"><span class="pill r">+214%</span></td><td class="r">96,1% a.a.</td></tr>
+            <tr><td class="k">Cheque especial</td><td class="n">24,3 mi</td><td class="r">+20%</td><td class="r">132,4% a.a.</td></tr>
+            <tr><td class="k">Crédito consignado</td><td class="n">24,0 mi</td><td class="r">+20%</td><td class="r">23,5% a.a.</td></tr>
+            <tr><td class="k">Financiamento automotivo</td><td class="n">9,7 mi</td><td class="r">+3%</td><td class="r">25,9% a.a.</td></tr>
+            <tr><td class="k">Financiamento imobiliário</td><td class="n">9,1 mi</td><td class="r">+23%</td><td class="r">10,5% a.a.</td></tr>
+          </tbody>
+        </table>
+        <p class="t" style="margin-top:10px;font-size:12px;">A taxa do cartão refere-se ao rotativo. A diferença entre a modalidade mais cara e a mais barata é de quase vinte vezes.</p>
+
+        <h3>Comprometimento de renda</h3>
+        <table>
+          <thead><tr><th>Recorte</th><th class="r">% da renda</th><th class="r">Limite usado</th></tr></thead>
+          <tbody>
+            <tr><td>Média nacional</td><td class="n">24,7%</td><td class="n">21,6%</td></tr>
+            <tr><td class="k">Mulheres</td><td class="n">25,3%</td><td class="n">22,4%</td></tr>
+            <tr><td>Homens</td><td class="n">24,1%</td><td class="n">20,8%</td></tr>
+            <tr><td class="k">35 a 60 anos</td><td class="n">26,0%</td><td class="n">22,1%</td></tr>
+            <tr><td>Acima de 60 anos</td><td class="n">24,5%</td><td class="n">26,4%</td></tr>
+            <tr><td>18 a 34 anos</td><td class="n">22,1%</td><td class="n">17,8%</td></tr>
+            <tr><td class="k">Região Centro Oeste</td><td class="n">28,3%</td><td class="n">14,9%</td></tr>
+            <tr><td class="k">Região Norte</td><td class="n">27,9%</td><td class="n">14,4%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PERSONAS ============ -->
+  <div class="page" id="personas">
+    <div class="pagehead">
+      <h1>Três pessoas, o mesmo problema</h1>
+      <p><span class="s">Problema aprofundado: atrito em crédito e cartão</span><span class="s">Cobrança contestada, contratação não reconhecida e dificuldade de resolver</span><span class="s">Os três perfis emergiram do cruzamento, não de uma hipótese anterior</span></p>
+    </div>
+
+    <p class="t" style="margin-bottom:16px"><span class="s">Cada percentual abaixo traz o denominador a que se refere</span><span class="s">Os marcadores separam três tipos que não são comparáveis entre si: <b class="mk mk-p">pessoas</b> conta gente, <b class="mk mk-d">dinheiro</b> conta fração de valor, <b class="mk mk-q">pesquisa</b> vem de survey de percepção</span></p>
+
+    <div class="g3">
+      <div class="card">
+        <div class="ico">◉</div>
+        <h4>Aposentado acima de 60 com desconto em folha que não reconhece</h4>
+        <div class="meta">Cerca de 24 milhões de pessoas usam consignado no país</div>
+        <div class="stat"><div class="l">Faixa etária</div><div class="v">Acima de 60 anos <small><b class="mk mk-p">pessoas</b> 20% dos clientes pessoa física do sistema financeiro, não da população brasileira</small></div></div>
+        <div class="g2s">
+          <div class="stat"><div class="l">Acesso a crédito</div><div class="v">81% <small><b class="mk mk-p">pessoas</b> dos clientes 60+ do SFN, quantos têm limite disponível</small></div></div>
+          <div class="stat"><div class="l">Uso do limite</div><div class="v">26,4% <small><b class="mk mk-d">dinheiro</b> do limite disponível ao grupo que está tomado</small></div></div>
+        </div>
+        <div class="stat"><div class="l">Inadimplência</div><div class="v">9% <small><b class="mk mk-p">pessoas</b> dos clientes 60+ com crédito ativo que têm ativo problemático, contra média nacional de 16%</small></div></div>
+        <div class="stat"><div class="l">Canal</div><div class="v">Telefone e agência <small><b class="mk mk-p">pessoas</b> 59% da população 60+ usa internet e 43,9% usa Pix com frequência. Em outro denominador, 9% do total de clientes de fintechs tem mais de 60 anos</small></div></div>
+        <div class="stat" style="margin-bottom:0"><div class="l">Como a dor se manifesta</div><div class="v" style="font-size:12.5px;font-weight:400;color:var(--muted2);line-height:1.55">Descobre o desconto no extrato, não numa notificação. Está em banco tradicional. Quando reclama usa o 145, por isso o consignado lidera no Banco Central e não no Consumidor.gov.br.</div></div>
+      </div>
+
+      <div class="card">
+        <div class="ico">◉</div>
+        <h4>Jovem de 18 a 34 com fatura que virou rotativo</h4>
+        <div class="meta">52,8 milhões de brasileiros com dívida no cartão</div>
+        <div class="stat"><div class="l">Faixa etária</div><div class="v">18 a 34 anos <small><b class="mk mk-p">pessoas</b> 35% dos clientes pessoa física do SFN. Em outro denominador, 44% do total de clientes de fintechs</small></div></div>
+        <div class="g2s">
+          <div class="stat"><div class="l">Acesso a crédito</div><div class="v">67% <small><b class="mk mk-p">pessoas</b> dos jovens clientes do SFN, quantos têm limite disponível</small></div></div>
+          <div class="stat"><div class="l">Uso do limite</div><div class="v">17,8% <small><b class="mk mk-d">dinheiro</b> do limite disponível ao grupo que está tomado</small></div></div>
+        </div>
+        <div class="stat"><div class="l">Ativação do limite</div><div class="v">95% <small><b class="mk mk-p">pessoas</b> <b>dos 67% que já têm limite</b>, não do total de jovens. É subconjunto, não comparável ao número acima</small></div></div>
+        <div class="stat"><div class="l">Inadimplência</div><div class="v">19% <small><b class="mk mk-p">pessoas</b> dos jovens com crédito ativo que têm ativo problemático. A pior entre as faixas etárias</small></div></div>
+        <div class="stat"><div class="l">Canal</div><div class="v">Aplicativo e gov.br <small>nativo digital, cliente de fintech, por isso cartão lidera no Consumidor.gov.br</small></div></div>
+        <div class="stat" style="margin-bottom:0"><div class="l">Como a dor se manifesta</div><div class="v" style="font-size:12.5px;font-weight:400;color:var(--muted2);line-height:1.55">Tem menos crédito disponível, usa quase tudo o que tem e inadimple mais. Exposto ao rotativo a 430,1% ao ano. O cartão pré cadastrado em apps reduz a percepção do gasto.</div></div>
+      </div>
+
+      <div class="card">
+        <div class="ico">◉</div>
+        <h4>Mulher de 35 a 60 com crédito espalhado em vários bancos</h4>
+        <div class="meta">6,7 relacionamentos financeiros por pessoa, em média. Média de contagem, não percentual</div>
+        <div class="stat"><div class="l">Faixa etária e gênero</div><div class="v">35 a 60 anos <small><b class="mk mk-p">pessoas</b> 45% dos clientes pessoa física do SFN. Mulheres são 52% do mesmo total</small></div></div>
+        <div class="g2s">
+          <div class="stat"><div class="l">Comprometimento</div><div class="v">25,3% <small><b class="mk mk-d">dinheiro</b> da renda mensal que vai para dívida, entre mulheres. Homens: 24,1%</small></div></div>
+          <div class="stat"><div class="l">Uso do limite</div><div class="v">22,4% <small><b class="mk mk-d">dinheiro</b> do limite disponível que está tomado. Homens: 20,8%</small></div></div>
+        </div>
+        <div class="stat"><div class="l">Região dominante</div><div class="v">Norte e Centro Oeste <small><b class="mk mk-d">dinheiro</b> 27,9% e 28,3% da renda mensal comprometida, o maior do país. Média nacional: 24,7%</small></div></div>
+        <div class="stat"><div class="l">Inadimplência</div><div class="v">16% <small><b class="mk mk-p">pessoas</b> dos clientes com crédito ativo nesse recorte. Entre inscritos no CadÚnico: 18%</small></div></div>
+        <div class="stat"><div class="l">Estresse financeiro</div><div class="v">44% <small><b class="mk mk-q">pesquisa</b> das mulheres respondentes que concordam totalmente que preocupações financeiras causam estresse em casa. Homens: 27,3%</small></div></div>
+        <div class="stat" style="margin-bottom:0"><div class="l">Como a dor se manifesta</div><div class="v" style="font-size:12.5px;font-weight:400;color:var(--muted2);line-height:1.55">A dívida não está num banco, está espalhada. O problema não é o valor de uma cobrança, é o acúmulo e a impossibilidade de enxergar o todo.</div></div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:22px">
+      <p><b>Ressalva sobre dois números:</b> os percentuais de uso de internet e de Pix entre pessoas com 60 anos ou mais vêm de pesquisa citada dentro do Relatório de Cidadania Financeira. A metodologia da pesquisa de origem não foi verificada, então o denominador exato, se população total ou apenas usuários de serviços financeiros, permanece como suposição.</p>
+    </div>
+
+    <div class="panel" style="margin-top:22px">
+      <h3>O que as separa importa mais do que o que as une</h3>
+      <p class="t">As três compartilham um problema de visibilidade: descobrem a cobrança depois que ela aconteceu. Nenhuma tem, primariamente, um problema de atendimento. Mas as três reclamam em canais diferentes, o que significa que nenhuma base pública sozinha enxerga as três.</p>
+      <div class="ins" style="margin-top:16px">
+        <h4>Um produto que só existe em aplicativo já perdeu a persona mais adimplente</h4>
+        <p>O aposentado acima de 60 tem a menor inadimplência do país e o maior uso de limite. É um cliente de crédito de alta qualidade. E é o que menos acessa canal digital.</p>
+      </div>
+      <div class="ins">
+        <h4>A pergunta sobre qual banco escolher só serve bem a uma das três</h4>
+        <p>Para a jovem de 18 a 34, comparar bancos faz sentido. Para a mulher de 35 a 60 com 6,7 relacionamentos, a pergunta certa é onde o dinheiro está vazando entre eles. Para o aposentado, é se o desconto foi autorizado.</p>
+      </div>
+      <div class="ins">
+        <h4>Crédito pessoal cresceu 214% e ainda não gerou reclamação proporcional</h4>
+        <p>A base saltou de 13,3 para 41,7 milhões de clientes em quatro anos. É a modalidade com maior descompasso entre velocidade de adoção e maturidade de supervisão. Vale monitorar como sinal antecedente, não como problema consolidado.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FONTES ============ -->
+  <div class="page" id="fontes">
+    <div class="pagehead">
+      <h1>Limitações e fontes</h1>
+      <p><span class="s">Tudo o que precisa acompanhar qualquer uso deste material, incluindo o que foi descartado na verificação</span></p>
+    </div>
+
+    <div class="panel">
+      <h3>Limitações metodológicas</h3>
+      <ul class="li">
+        <li><b>Viés de acesso.</b> As bases só registram quem sabe que pode reclamar e consegue chegar ao canal. Reclamar ao Banco Central exige tentativa prévia com a instituição. O Consumidor.gov.br exige conta gov.br. Quem não passa por esses filtros não aparece em lugar nenhum.</li>
+        <li><b>Viés de canal.</b> Público mais velho reclama por telefone, público mais jovem reclama por plataforma digital. Isso distorce o ranking de temas em direções opostas nas fontes.</li>
+        <li><b>Viés de tema.</b> O Banco Central só contabiliza o que configura descumprimento de norma sob sua supervisão. Insatisfação legítima que não é irregularidade regulatória some da base.</li>
+        <li><b>Viés de adesão.</b> O Consumidor.gov.br só inclui empresas que aderem voluntariamente. O Reclame Aqui também depende de adesão e sua nota premia quem responde rápido, não necessariamente quem resolve.</li>
+        <li><b>Conflito de modelo de negócio.</b> O Reclame Aqui vende serviços de reputação e selos às mesmas empresas que avalia. Os dados não são invalidados por isso, mas não têm o mesmo estatuto de um registro regulatório.</li>
+        <li><b>Denominadores incompatíveis.</b> O Banco Central normaliza por milhão de clientes. O Consumidor.gov.br conta volume absoluto por mês. O Reclame Aqui não publica base de clientes e mistura janelas temporais. Nenhuma comparação direta de volume entre as três é válida.</li>
+        <li><b>Demografia inexistente nas três fontes.</b> Nenhuma publica gênero, idade ou região de quem reclama. Todo recorte demográfico deste material vem de dados de uso de crédito do Banco Central.</li>
+        <li><b>Inferência demográfica.</b> As personas cruzam dados de uso de crédito com temas de reclamação. É um passo de inferência defensável, mas não é dado direto.</li>
+        <li><b>Defasagem.</b> O perfil demográfico é de dezembro de 2024. O ranking de instituições vai até o 2º trimestre de 2026. Cerca de dezoito meses entre as duas camadas.</li>
+        <li><b>Lacuna aberta.</b> O volume de reclamações bancárias no Consumidor.gov.br caiu 28% entre 2023 e 2024 e depois saltou 137,4% em 2026. Não há explicação disponível nas fontes consultadas.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3>Fontes</h3>
+      <p class="t srcp"><b>Banco Central do Brasil, Relatório de Cidadania Financeira 2025</b> (dados de dezembro de 2024). Origem da maior parte dos números de perfil, taxas de juros, modalidades de crédito e temas reclamados nos dois canais oficiais.<br>
+      <a href="https://www.bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/RIF/relatorio_de_cidadania_financeira_2025.pdf">bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/RIF/relatorio_de_cidadania_financeira_2025.pdf</a></p>
+
+      <p class="t srcp"><b>Banco Central do Brasil, Ranking de Reclamações</b>, 1º e 2º trimestres de 2026.<br>
+      <a href="https://www.bcb.gov.br/meubc/rankingreclamacoes">bcb.gov.br/meubc/rankingreclamacoes</a></p>
+
+      <p class="t"><b>Consumidor.gov.br, Secretaria Nacional do Consumidor</b>, indicadores e metodologia.<br>
+      <a href="https://www.consumidor.gov.br/pages/conteudo/publico/1">consumidor.gov.br/pages/conteudo/publico/1</a></p>
+
+      <p class="t"><b>Finsiders Brasil</b>, "Ranking de reclamações do BC: quem lidera no início de 2026", Danylo Martins, 23 de abril de 2026. Tabela completa das quinze instituições.<br>
+      <a href="https://finsidersbrasil.com.br/estudos-e-relatorios/c6-bradesco-e-btg-pan-lideram-queixas-contra-bancos-no-1o-tri-aponta-bc/">finsidersbrasil.com.br/estudos-e-relatorios/c6-bradesco-e-btg-pan-lideram-queixas-contra-bancos-no-1o-tri-aponta-bc</a></p>
+
+      <p class="t"><b>Poder360</b>, "Bradesco lidera ranking de reclamações no 2º trimestre de 2026", 23 de julho de 2026.<br>
+      <a href="https://www.poder360.com.br/poder-economia/bradesco-lidera-ranking-de-reclamacoes-no-2o-trimestre-de-2026/">poder360.com.br/poder-economia/bradesco-lidera-ranking-de-reclamacoes-no-2o-trimestre-de-2026</a></p>
+
+      <p class="t"><b>Consumo em Pauta</b>, "Reclamações crescem 45% em 2026, bancos lideram ranking", 21 de julho de 2026, e matéria sobre o comparativo anual de agosto de 2026.<br>
+      <a href="https://www.consumoempauta.com.br/especiais/reclamacoes-crescem-45-em-2026-bancos-lideram-ranking/">consumoempauta.com.br/especiais/reclamacoes-crescem-45-em-2026-bancos-lideram-ranking</a></p>
+
+      <p class="t"><b>Reclame Aqui</b>, páginas públicas de reputação de Nubank, Itaú, Bradesco e Santander, dados de 1º de março a 31 de agosto de 2026. Números obtidos de conteúdo já indexado publicamente, sem coleta automatizada.<br>
+      <a href="https://www.reclameaqui.com.br/">reclameaqui.com.br</a></p>
+    </div>
+
+    <div class="panel">
+      <h3>Descartado na verificação</h3>
+      <div class="warn" style="margin-bottom:0">
+        <p>Uma fonte secundária apresentava índices do Banco Central para bancos digitais, com o Nubank em 17,1 no 1º trimestre de 2026, que <b>não conferem com o ranking oficial</b>, onde o Nubank aparece com 10,65. Os números não foram usados. O registro fica aqui porque essa fonte aparece com destaque em buscas sobre o tema.</p>
+      </div>
+      <h3>Nota sobre linguagem</h3>
+      <p class="t">Este material não usa a expressão melhor banco em nenhum ponto. Onde há comparação, a formulação é entre as instituições com dados públicos disponíveis, a que apresenta menor índice de determinado indicador. Onde falta base, está escrito que falta.</p>
+    </div>
+  </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var navs = document.querySelectorAll('.navitem');
+  var pages = document.querySelectorAll('.page');
+  var crumb = document.getElementById('crumb');
+
+  navs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.getAttribute('data-go');
+      navs.forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      pages.forEach(function(p){ p.classList.toggle('on', p.id === id); });
+      crumb.textContent = btn.textContent.trim();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  var chips = document.querySelectorAll('.chip[data-tri]');
+  chips.forEach(function(c){
+    c.addEventListener('click', function(){
+      chips.forEach(function(x){ x.classList.remove('on'); });
+      c.classList.add('on');
+      var pick = c.getAttribute('data-tri');
+      document.getElementById('t1').style.display = (pick === 't1') ? 'block' : 'none';
+      document.getElementById('t2').style.display = (pick === 't2') ? 'block' : 'none';
+    });
+  });
+  var REG = {
+    norte:       {nome:'Região Norte',       inad:'19%', comp:'27,9%', lim:'14,4%',
+                  note:'Maior inadimplência do país, empatada com a faixa de 18 a 34 anos'},
+    nordeste:    {nome:'Região Nordeste',    inad:'17%', comp:null,    lim:null,
+                  note:'Comprometimento de renda e uso de limite não foram publicados para esta região nas fontes consultadas'},
+    sudeste:     {nome:'Região Sudeste',     inad:'16%', comp:'23,7%', lim:null,
+                  note:'Uso de limite não foi publicado para esta região nas fontes consultadas'},
+    centrooeste: {nome:'Região Centro Oeste',inad:'16%', comp:'28,3%', lim:'14,9%',
+                  note:'Maior comprometimento de renda do país, apesar do menor uso de limite disponível'},
+    sul:         {nome:'Região Sul',         inad:'14%', comp:null,    lim:null,
+                  note:'Menor inadimplência entre as regiões, mas comprometimento e uso de limite não publicados'}
+  };
+  var NAC = {nome:'Brasil', inad:'16%', comp:'24,7%', lim:'21,6%',
+             note:'Valores nacionais do Banco Central, base de dezembro de 2024'};
+
+  var regs  = document.querySelectorAll('.reg');
+  var rBars = document.querySelectorAll('#grp-regiao .bar-row');
+  var nBars = document.querySelectorAll('.bar-row[data-nat]');
+  var el = {
+    nome: document.getElementById('d-nome'), tag: document.getElementById('d-tag'),
+    inad: document.getElementById('d-inad'), comp: document.getElementById('d-comp'),
+    lim:  document.getElementById('d-lim'),  note: document.getElementById('d-note')
+  };
+
+  function pinta(k){
+    var d = k ? REG[k] : NAC;
+    el.nome.textContent = d.nome;
+    el.tag.textContent  = k ? 'região selecionada' : 'visão nacional';
+    el.inad.textContent = d.inad;
+    el.comp.textContent = d.comp || 'sem dado';
+    el.lim.textContent  = d.lim  || 'sem dado';
+    el.note.innerHTML   = '<span class="s">' + d.note + '</span>' +
+      (k ? '<span class="s">Os gráficos de faixa etária e CadÚnico seguem nacionais, ' +
+           'porque nenhuma fonte publica essa quebra por região</span>' : '');
+
+    regs.forEach(function(r){ r.classList.toggle('sel', r.getAttribute('data-reg') === k); });
+    rBars.forEach(function(b){
+      var m = b.getAttribute('data-reg') === k;
+      b.classList.toggle('sel', m);
+      b.classList.toggle('dim', !!k && !m);
+    });
+    nBars.forEach(function(b){ b.classList.toggle('dim', !!k); });
+  }
+
+  regs.forEach(function(r){
+    r.addEventListener('click', function(){
+      var k = r.getAttribute('data-reg');
+      pinta(r.classList.contains('sel') ? null : k);
+    });
+  });
+  rBars.forEach(function(b){
+    b.style.cursor = 'pointer';
+    b.addEventListener('click', function(){
+      var k = b.getAttribute('data-reg');
+      pinta(b.classList.contains('sel') ? null : k);
+    });
+  });
+  var rst = document.getElementById('d-reset');
+  if (rst) rst.addEventListener('click', function(){ pinta(null); });
+})();
+</script>
+</body>
+</html>

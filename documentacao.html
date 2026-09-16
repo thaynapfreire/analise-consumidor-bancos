@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentação: Análise de Dados do consumidor de Bancos Brasileiros</title>
+<style>
+:root{
+  --bg:#F7F7FB; --white:#FFF; --line:#ECECF3; --ink:#16162B;
+  --muted:#8A8AA3; --muted2:#5B5B77; --purple:#6D4EE6; --purple-soft:#F0ECFE;
+  --amber:#B4690E; --amber-soft:#FDF3E3;
+  --p1:#4A2FB8; --p2:#6D4EE6; --p3:#8B72EE; --p4:#C4BAF9;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--muted2);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  font-size:12px;line-height:1.5;}
+.sheet{max-width:1100px;margin:0 auto;background:var(--white);
+  border:1px solid var(--line);border-radius:16px;padding:26px 30px 30px;}
+header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:18px;
+  display:flex;align-items:flex-start;gap:16px;}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--p2);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+h1{font-size:19px;color:var(--ink);font-weight:700;letter-spacing:-.3px;line-height:1.25;}
+header p{font-size:11.5px;color:var(--muted);margin-top:3px;}
+.vers{margin-left:auto;text-align:right;font-size:10.5px;color:var(--muted);flex-shrink:0;}
+.vers b{display:block;color:var(--ink);font-size:11.5px;}
+h2{font-size:12.5px;color:var(--ink);font-weight:650;margin:0 0 7px;
+  text-transform:uppercase;letter-spacing:.6px;}
+h3{font-size:12px;color:var(--ink);font-weight:650;margin:12px 0 5px;}
+p{text-align:justify;text-justify:inter-word;hyphens:auto;margin-bottom:7px;}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+section{margin-bottom:17px;}
+table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;}
+th{text-align:left;font-size:9.5px;color:var(--muted);font-weight:650;
+  text-transform:uppercase;letter-spacing:.4px;padding:0 7px 5px;border-bottom:1px solid var(--line);}
+td{padding:6px 7px;border-bottom:1px solid var(--line);vertical-align:top;}
+td.k{color:var(--ink);font-weight:600;white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;
+  background:var(--bg);padding:1px 4px;border-radius:4px;color:var(--p1);}
+pre{background:var(--bg);border-radius:8px;padding:11px 13px;font-size:10.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);
+  line-height:1.6;overflow-x:auto;margin-bottom:7px;}
+ol,ul{padding-left:16px;margin-bottom:7px;}
+li{margin-bottom:4px;text-align:justify;}
+.note{background:var(--amber-soft);border-radius:8px;padding:10px 13px;margin-bottom:8px;}
+.note p{color:#6B4408;margin:0;font-size:11px;}
+.note b{color:#4A2E04;}
+.rule{background:var(--purple-soft);border-radius:8px;padding:10px 13px;margin-bottom:8px;}
+.rule p{color:#2F2679;margin:0;font-size:11px;}
+.rule b{color:var(--p1);}
+.tag{display:inline-block;font-size:9px;font-weight:650;text-transform:uppercase;
+  letter-spacing:.5px;padding:1px 6px;border-radius:5px;background:var(--purple-soft);
+  color:var(--p1);margin-right:4px;vertical-align:1px;}
+.tag.d{background:var(--p1);color:#fff;}
+footer{border-top:1px solid var(--line);margin-top:6px;padding-top:11px;
+  font-size:10px;color:var(--muted);}
+footer a{color:var(--p2);text-decoration:none;}
+@media print{body{background:#fff;font-size:10.5px;}
+  .sheet{border:none;border-radius:0;max-width:none;padding:0;}
+  @page{margin:12mm;}}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <div class="logo">AD</div>
+  <div>
+    <h1>Análise de Dados do consumidor de Bancos Brasileiros</h1>
+    <p>Documentação técnica e metodológica do dashboard</p>
+  </div>
+  <div class="vers"><b>Versão 2</b>15 de setembro de 2026<br>Dados: dez/2024 a ago/2026</div>
+</header>
+
+<section>
+  <h2>1. O que é e para que serve</h2>
+  <p>Leitura comparada de três bases públicas sobre reclamação bancária no Brasil. O objetivo não é ranquear instituições, e sim expor que as fontes disponíveis respondem a perguntas diferentes e chegam a conclusões incompatíveis sobre o mesmo banco. O dashboard existe para tornar essa divergência visível e explicável, e para sustentar as decisões de produto derivadas dela.</p>
+  <p>Público: times de produto, dados e estratégia que precisam decidir o que é possível afirmar com dado público brasileiro. Não é ferramenta de recomendação de banco para consumidor final.</p>
+</section>
+
+<section>
+  <h2>2. Fontes e o que cada uma mede</h2>
+  <table>
+    <thead><tr><th>Fonte</th><th>Natureza</th><th>O que mede</th><th>Denominador</th><th>Período</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Banco Central<br>Ranking de Reclamações</td><td>Oficial, regulatória</td><td>Reclamações classificadas como procedentes, ou seja, com indício de descumprimento de norma</td><td>Por milhão de clientes do conglomerado</td><td>1º e 2º tri de 2026</td></tr>
+      <tr><td class="k">Banco Central<br>RDR</td><td>Oficial, regulatória</td><td>Volume bruto de acessos aos canais de atendimento ao cidadão</td><td>Contagem absoluta</td><td>2024</td></tr>
+      <tr><td class="k">Consumidor.gov.br</td><td>Oficial, consensual</td><td>Volume registrado, taxa de resposta, índice de solução autodeclarado, nota de satisfação</td><td>Contagem absoluta mensal</td><td>2018 a jul/2026</td></tr>
+      <tr><td class="k">Reclame Aqui</td><td>Privada, comercial</td><td>Reputação composta, que pondera taxa e velocidade de resposta além de resolução</td><td>Não publicado</td><td>mar a ago/2026</td></tr>
+      <tr><td class="k">Banco Central<br>Cidadania Financeira</td><td>Oficial, estatística</td><td>Perfil de uso de crédito por idade, gênero, região e faixa de renda</td><td>Clientes do sistema financeiro</td><td>dez/2024</td></tr>
+    </tbody>
+  </table>
+  <div class="note"><p><b>Restrição de coleta:</b> os números do Reclame Aqui vieram exclusivamente de conteúdo público já indexado, sem coleta automatizada das páginas da plataforma, em respeito aos termos de uso. Isso limita a cobertura a quatro instituições, contra quinze no ranking do Banco Central.</p></div>
+</section>
+
+<div class="cols">
+<section>
+  <h2>3. Modelagem do cruzamento</h2>
+  <p>O cruzamento não soma nem pondera fontes. Ele compara <b>posição relativa</b> e registra <b>divergência</b>. A regra de comparabilidade é explícita no modelo.</p>
+  <pre>observacao(
+  instituicao      texto
+  fonte            bacen_ranking | bacen_rdr
+                   | consumidor_gov | reclame_aqui
+  metrica          indice | volume | nota
+                   | solucao | tempo_resposta
+  valor            numerico
+  escala           por_milhao | absoluto
+                   | nota_0_5 | nota_0_10 | percentual
+  denominador      texto ou NULO
+  periodo_ini      data
+  periodo_fim      data
+  url_origem       texto
+)</pre>
+  <h3>Regra de comparabilidade</h3>
+  <p>Duas observações só podem ser comparadas numericamente se <code>escala</code> e <code>denominador</code> forem idênticos. Quando divergem, a comparação é feita por <b>ordinal</b>, isto é, pela posição dentro da própria fonte, nunca pelo valor absoluto.</p>
+  <div class="rule"><p><b>Exemplo de aplicação:</b> Bradesco tem 10.566 reclamações avaliadas no Reclame Aqui e 9.375 procedentes no Banco Central. Os denominadores diferem, portanto os números não entram na mesma tabela como se fossem grandezas equivalentes. O que se compara é que a instituição aparece em posição desfavorável em ambas.</p></div>
+  <h3>Normalização de nota</h3>
+  <p>Quando duas fontes medem satisfação em escalas diferentes, a conversão é linear e declarada. Nota 1,98 em escala de 5 equivale a 3,96 em escala de 10. A conversão é reportada junto do valor original, nunca sozinha.</p>
+</section>
+
+<section>
+  <h2>4. Método de análise</h2>
+  <ol>
+    <li><b>Levantamento por fonte, isolado.</b> Cada base foi lida sem referência às outras, para evitar que o resultado de uma condicionasse a leitura da seguinte.</li>
+    <li><b>Classificação de métrica.</b> Cada número recebeu um tipo: <span class="tag">pessoas</span> contagem de gente, <span class="tag d">dinheiro</span> fração de valor, <span class="tag">pesquisa</span> percepção declarada. Tipos diferentes nunca são comparados.</li>
+    <li><b>Cruzamento ordinal de temas.</b> Comparação das três posições de topo de cada fonte. Resultado: os mesmos três temas em ambas as fontes oficiais, com ordem invertida entre 1º e 2º.</li>
+    <li><b>Cruzamento por instituição.</b> Para cada banco presente em mais de uma fonte, registro do que cada uma diz e classificação em convergência, divergência parcial ou oposição.</li>
+    <li><b>Teste de hipótese sobre a divergência.</b> A inversão entre consignado e cartão foi testada contra dados de acesso digital por faixa etária. A hipótese de viés de canal é consistente com os dados, mas permanece hipótese: nenhuma fonte a afirma.</li>
+    <li><b>Derivação de perfil.</b> Como nenhuma fonte publica demografia de quem reclama, os perfis foram construídos a partir de dados de uso de crédito. Isso é uma inferência de um passo, sinalizada como tal em todo o material.</li>
+  </ol>
+  <h3>Achado principal</h3>
+  <p>O Nubank aparece em 13º de 15 no Banco Central, 1º em volume no Consumidor.gov.br e com a melhor reputação entre os grandes no Reclame Aqui, no mesmo semestre. As três leituras são defensáveis dentro das respectivas metodologias, o que indica que a metodologia, e não o desempenho da instituição, está produzindo o resultado.</p>
+</section>
+</div>
+
+<div class="cols">
+<section>
+  <h2>5. Regras de linguagem aplicadas</h2>
+  <ul>
+    <li>A expressão <b>melhor banco</b> não é usada em nenhum ponto. A formulação é: entre as instituições com dados públicos disponíveis, a que apresenta menor índice de determinado indicador.</li>
+    <li>Toda afirmação sobre reclamação vem acompanhada do viés estrutural da fonte que a originou.</li>
+    <li>Onde não há base, está escrito <b>sem dado</b> ou <b>não publicado</b>. Nenhuma célula foi preenchida por estimativa ou interpolação.</li>
+    <li>Números que não puderam ser confirmados em fonte primária estão identificados como vindos de fonte secundária que cita a origem oficial.</li>
+    <li>Inferências estão marcadas como inferência, separadas do que as fontes afirmam.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>6. Limitações que acompanham qualquer uso</h2>
+  <ul>
+    <li><b>Viés de acesso.</b> As bases só registram quem sabe que pode reclamar e consegue chegar ao canal.</li>
+    <li><b>Viés de canal.</b> Público mais velho reclama por telefone, público mais jovem por plataforma digital. Isso distorce o ranking de temas em direções opostas.</li>
+    <li><b>Viés de tema.</b> O Banco Central só contabiliza descumprimento de norma sob sua supervisão.</li>
+    <li><b>Conflito de modelo de negócio.</b> O Reclame Aqui vende serviços de reputação às empresas que avalia.</li>
+    <li><b>Demografia inexistente.</b> Nenhuma das três fontes publica idade, gênero ou região de quem reclama.</li>
+    <li><b>Defasagem.</b> Cerca de dezoito meses entre a camada demográfica e o ranking mais recente.</li>
+    <li><b>Lacuna aberta.</b> Queda de 28% no volume do Consumidor.gov.br entre 2023 e 2024 seguida de alta de 137,4% em 2026, sem explicação nas fontes consultadas.</li>
+  </ul>
+</section>
+</div>
+
+<section>
+  <h2>7. Atualização e manutenção</h2>
+  <table>
+    <thead><tr><th>Gatilho</th><th>Frequência</th><th>O que revisar</th><th>Critério de alerta</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Ranking do Banco Central</td><td>Trimestral, cerca de 3 semanas após o fechamento</td><td>Bloco do Banco Central e tabela de cruzamento por instituição</td><td>Variação acima de 10 pontos no índice de qualquer instituição</td></tr>
+      <tr><td class="k">Consumidor.gov.br</td><td>Mensal</td><td>Índice de solução, nota e volume por instituição</td><td>Queda superior a 5 pontos percentuais no índice de solução</td></tr>
+      <tr><td class="k">Reclame Aqui</td><td>Semestral</td><td>Reputação e tempo de resposta das instituições cobertas</td><td>Mudança de posição relativa entre instituições</td></tr>
+      <tr><td class="k">Cidadania Financeira</td><td>Anual</td><td>Todas as personas e todos os recortes demográficos</td><td>Qualquer alteração exige revalidação integral dos três perfis</td></tr>
+    </tbody>
+  </table>
+  <div class="rule"><p><b>Regra de versionamento:</b> quando uma fonte publicar dado novo que contradiga o que está no dashboard, a versão anterior não é apagada. O bloco de verificação registra o que mudou e o que foi descartado, para que a leitura antiga continue auditável.</p></div>
+</section>
+
+<footer>
+  <b style="color:var(--ink)">Fontes primárias:</b>
+  Banco Central, Relatório de Cidadania Financeira 2025 · Banco Central, Ranking de Reclamações, 1º e 2º tri 2026 ·
+  Consumidor.gov.br, Senacon/MJSP · Reclame Aqui, páginas públicas de reputação.
+  <b style="color:var(--ink)">Secundárias que citam a origem oficial:</b>
+  Finsiders Brasil (23/04/2026) · Poder360 (23/07/2026) · Consumo em Pauta (21/07/2026).
+  <b style="color:var(--ink)">Descartado na verificação:</b>
+  fonte secundária com índices do Banco Central divergentes do ranking oficial, não utilizada.
+</footer>
+
+</div>
+</body>
+</html>
