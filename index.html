@@ -195,6 +195,60 @@ a:hover{text-decoration:underline;}
   font-variant-numeric:tabular-nums;}
 .dnote{font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:12px;
   border-top:1px solid var(--line);text-align:justify;}
+
+/* ---------- v2: modelos ---------- */
+.sidelbl{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--muted);padding:16px 12px 6px;}
+.vtag{font-size:10px;font-weight:700;background:var(--purple);color:#fff;border-radius:5px;
+  padding:1px 6px;margin-left:2px;letter-spacing:.3px;}
+.simwrap{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:6px;
+  text-transform:uppercase;letter-spacing:.4px;}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--bg);padding:3px;border-radius:9px;}
+.seg button{flex:1 1 auto;border:none;background:none;font-family:inherit;font-size:12.5px;
+  color:var(--muted2);padding:6px 10px;border-radius:7px;cursor:pointer;white-space:nowrap;}
+.seg button.on{background:var(--white);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(20,20,45,.07);}
+.seg button:focus-visible,.hm td.c:focus-visible,.pbtn:focus-visible{outline:2px solid var(--purple);outline-offset:1px;}
+.pbtns{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.pbtn{border:1px solid var(--line);background:var(--white);border-radius:9px;padding:8px 11px;
+  font-family:inherit;font-size:12.5px;color:var(--muted2);text-align:left;cursor:pointer;}
+.pbtn:hover{border-color:var(--purple);color:var(--purple);}
+.result{background:var(--bg);border-radius:14px;padding:20px 22px;}
+.result .big{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.result .big .v{font-size:44px;font-weight:700;color:var(--ink);letter-spacing:-1.5px;line-height:1;
+  font-variant-numeric:tabular-nums;}
+.result .big .band{font-size:13px;color:var(--muted2);}
+.gauge{position:relative;height:14px;background:var(--white);border-radius:20px;margin:18px 0 6px;overflow:visible;}
+.gauge .rng{position:absolute;top:0;height:14px;background:#C4BAF9;border-radius:20px;}
+.gauge .pt{position:absolute;top:-4px;width:4px;height:22px;background:#4A2FB8;border-radius:2px;margin-left:-2px;}
+.gauge .nat{position:absolute;top:-6px;width:0;height:26px;border-left:2px dashed var(--muted);}
+.gscale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;}
+.wf{margin-top:18px;}
+.wf .bar-row{grid-template-columns:150px 1fr 70px;}
+.wf .bar-tr{position:relative;background:var(--white);}
+.wf .bar-fl{position:absolute;top:0;}
+.wf .bar-fl.neg{background:#C4BAF9;}
+.hm{width:100%;border-collapse:separate;border-spacing:4px;font-size:12.5px;}
+.hm th{border:none;padding:4px 6px;text-align:center;text-transform:none;letter-spacing:0;font-size:11.5px;}
+.hm th.rh{text-align:right;color:var(--ink);font-weight:600;}
+.hm td.c{border:none;border-radius:8px;text-align:center;padding:12px 4px;font-weight:650;
+  font-variant-numeric:tabular-nums;cursor:pointer;transition:transform .1s;}
+.hm td.c:hover{transform:scale(1.04);}
+.hm td.c.sel{box-shadow:0 0 0 2px var(--ink);}
+.scale{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted);margin-top:10px;}
+.scale .grad{height:9px;width:160px;border-radius:5px;background:linear-gradient(90deg,#F0ECFE,#C4BAF9,#8B72EE,#4A2FB8);}
+.chart{width:100%;height:auto;display:block;}
+.chart text{font-family:inherit;font-size:11px;fill:var(--muted);}
+.chart .ax{stroke:var(--line);stroke-width:1;}
+.okx{color:var(--green);font-weight:600;}
+.nokx{color:var(--red);font-weight:600;}
+@media (max-width:900px){
+  .side{display:none;}
+  .kpis,.g2,.g3,.simwrap,.mapwrap{grid-template-columns:1fr;}
+  .content{padding:16px;}
+  .panel{overflow-x:auto;}
+}
 </style>
 </head>
 <body>
@@ -210,6 +264,11 @@ a:hover{text-decoration:underline;}
   <button class="navitem" data-go="cruz"><span class="ic">⧉</span>Cruzamento</button>
   <button class="navitem" data-go="credito"><span class="ic">▤</span>Perfil de crédito</button>
   <button class="navitem" data-go="personas"><span class="ic">◉</span>Personas</button>
+  <div class="sidelbl">Modelos preditivos</div>
+  <button class="navitem" data-go="risco"><span class="ic">◎</span>Simulador de risco</button>
+  <button class="navitem" data-go="proj"><span class="ic">↗</span>Projeções</button>
+  <button class="navitem" data-go="valid"><span class="ic">✓</span>Validação</button>
+  <div class="sidelbl">Referência</div>
   <button class="navitem" data-go="fontes"><span class="ic">≡</span>Limitações e fontes</button>
   <div class="sidefoot">
     <div class="avatar">3</div>
@@ -220,6 +279,7 @@ a:hover{text-decoration:underline;}
 <div class="main">
   <div class="top">
     <span class="crumb" id="crumb">Visão geral</span>
+    <span style="margin-left:auto;font-size:12px;color:var(--muted)"><span class="vtag">v2</span> com camada preditiva</span>
   </div>
 
   <div class="content">
@@ -268,6 +328,34 @@ a:hover{text-decoration:underline;}
       <div class="ins">
         <h4>O atrito está no crédito, não no atendimento</h4>
         <p>Os temas líderes nas duas fontes oficiais são todos operações de crédito. Isso desloca o diagnóstico: o problema nasce no produto e na cobrança, não na jornada de suporte.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Novo na v2: camada preditiva</h2><span class="pill p">três modelos</span></div>
+      <p class="panelnote"><span class="s">Os dados públicos são agregados, então nenhum modelo aqui foi treinado em registros individuais</span><span class="s">Cada modelo declara o que assume, quanto erra e o que não consegue prever</span></p>
+      <div class="g3">
+        <div class="card">
+          <div class="ico">◎</div>
+          <h4>Simulador de risco de inadimplência</h4>
+          <div class="meta">Regressão logística calibrada nas marginais do Banco Central por ajuste proporcional iterativo</div>
+          <div class="stat"><div class="l">Amplitude prevista</div><div class="v" id="ov-range">calculando</div></div>
+          <div class="stat" style="margin-bottom:0"><div class="l">Erro de calibração nas marginais</div><div class="v" id="ov-err">calculando</div></div>
+        </div>
+        <div class="card">
+          <div class="ico">↗</div>
+          <h4>Projeção de clientes por modalidade</h4>
+          <div class="meta">Três cenários até 2027, a partir de 2020 e 2024</div>
+          <div class="stat"><div class="l">Crédito pessoal em 2026</div><div class="v" id="ov-proj">calculando</div></div>
+          <div class="stat" style="margin-bottom:0"><div class="l">Tipo de saída</div><div class="v">Envelope de cenários <small>Não é intervalo de confiança, com dois pontos observados não há como estimar um</small></div></div>
+        </div>
+        <div class="card">
+          <div class="ico">✓</div>
+          <h4>Persistência do ranking do Banco Central</h4>
+          <div class="meta">Teste feito antes de prever o 3º trimestre de 2026</div>
+          <div class="stat"><div class="l">Correlação de Spearman</div><div class="v">0,80 <small>n igual a 5 instituições com posição publicada nos dois trimestres</small></div></div>
+          <div class="stat" style="margin-bottom:0"><div class="l">Veredito</div><div class="v"><span class="nokx">Não significativo</span> <small>Previsão do 3º trimestre não publicada</small></div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -717,6 +805,193 @@ a:hover{text-decoration:underline;}
     </div>
   </div>
 
+  <!-- ============ V2: SIMULADOR DE RISCO ============ -->
+  <div class="page" id="risco">
+    <div class="pagehead">
+      <h1>Simulador de risco de inadimplência</h1>
+      <p><span class="s">Estima a probabilidade de um cliente pessoa física com crédito ativo ter ativo problemático, dado faixa etária, região e inscrição no CadÚnico</span><span class="s">O Banco Central publica cada recorte separadamente, nunca cruzado, então o modelo reconstrói as 30 combinações a partir das marginais</span></p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Simule um perfil</h2><span class="pill p">regressão logística</span></div>
+      <p class="panelnote"><span class="s">Selecione Todos para marginalizar a variável, ponderando pela distribuição da base</span><span class="s">A faixa em volta do ponto é a divergência entre três especificações do modelo, não um intervalo de confiança amostral</span></p>
+
+      <div class="simwrap">
+        <div>
+          <div class="field"><label>Faixa etária</label><div class="seg" data-var="idade"></div></div>
+          <div class="field"><label>Região</label><div class="seg" data-var="regiao"></div></div>
+          <div class="field"><label>CadÚnico</label><div class="seg" data-var="cad"></div></div>
+          <div class="field" style="margin-bottom:0"><label>Carregar persona</label>
+            <div class="pbtns">
+              <button class="pbtn" data-persona="apos">Aposentado acima de 60</button>
+              <button class="pbtn" data-persona="jovem">Jovem de 18 a 34</button>
+              <button class="pbtn" data-persona="mulher">Mulher de 35 a 60, Norte</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="result">
+          <div class="l" style="font-size:12px;color:var(--muted)">Probabilidade estimada de inadimplência</div>
+          <div class="big"><span class="v" id="r-p">16,0%</span><span class="pill" id="r-rr">1,00× a média</span></div>
+          <div class="big" style="margin-top:6px"><span class="band" id="r-band">faixa entre modelos</span></div>
+          <div class="gauge" id="r-gauge"><div class="rng" id="r-rng"></div><div class="nat" id="r-nat" title="Média nacional, 16%"></div><div class="pt" id="r-pt"></div></div>
+          <div class="gscale"><span>5%</span><span>10%</span><span>15%</span><span>20%</span><span>25%</span><span>30%</span></div>
+
+          <div class="wf" id="r-wf"></div>
+          <p class="t" style="font-size:12px;margin:10px 0 0" id="r-wfnote"></p>
+
+          <table style="margin-top:16px" id="r-models">
+            <thead><tr><th>Especificação</th><th>Como combina os fatores</th><th class="r">Estimativa</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>As 30 combinações</h2>
+        <div class="chips" id="hm-cad">
+          <button class="chip on" data-cad="sim">Inscritos no CadÚnico</button>
+          <button class="chip" data-cad="nao">Não inscritos</button>
+        </div>
+      </div>
+      <p class="panelnote"><span class="s">Probabilidade prevista pela especificação logística</span><span class="s">Clique em uma célula para carregar o perfil no simulador</span></p>
+      <table class="hm" id="hm"></table>
+      <div class="scale"><span>menor risco</span><span class="grad"></span><span>maior risco</span></div>
+      <div class="ins" style="margin-top:18px">
+        <h4 id="hm-ins-t">Distância entre extremos</h4>
+        <p id="hm-ins-p"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Como o modelo foi construído</h3>
+      <p class="t">A forma é uma regressão logística sem interações: o log da chance de inadimplência é a soma de um efeito por faixa etária, um por região e um por CadÚnico. Os coeficientes não vêm de regressão em microdados, que não são públicos. Vêm de ajuste proporcional iterativo, o mesmo princípio do raking usado em pesquisa amostral: a cada rodada, cada coeficiente é corrigido até que a média ponderada das previsões reproduza a inadimplência publicada para aquele recorte, após uma reconciliação de até 0,5 p.p. que corrige o arredondamento das taxas, detalhada na aba Validação. Com as marginais fixas e sem informação sobre interações, é a solução de máxima entropia.</p>
+      <p class="t">Duas especificações alternativas são ajustadas com o mesmo procedimento: uma aditiva na escala de probabilidade e uma multiplicativa, de risco relativo. As três reproduzem as marginais. Elas só discordam nas combinações, e essa discordância é a faixa exibida.</p>
+      <table style="margin-top:6px">
+        <thead><tr><th>Insumo</th><th>Valor usado</th><th>Origem</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Inadimplência por faixa etária</td><td>19%, 16%, 9%</td><td>Banco Central, dezembro de 2024</td></tr>
+          <tr><td class="k">Peso de cada faixa etária</td><td>35%, 45%, 20%</td><td>Banco Central, clientes pessoa física do SFN</td></tr>
+          <tr><td class="k">Inadimplência por região</td><td>19%, 17%, 16%, 16%, 14%</td><td>Banco Central, dezembro de 2024</td></tr>
+          <tr><td class="k">Peso de cada região</td><td>8,5%, 26,9%, 41,8%, 8,0%, 14,7%</td><td><span class="pill a">proxy</span> População do Censo 2022, não base de clientes</td></tr>
+          <tr><td class="k">Inadimplência por CadÚnico</td><td>18% e 14%</td><td>Banco Central, dezembro de 2024</td></tr>
+          <tr><td class="k">Peso do CadÚnico</td><td>50% e 50%</td><td><span class="pill a">derivado</span> Único valor que faz 18% e 14% resultarem na média de 16%</td></tr>
+        </tbody>
+      </table>
+      <div class="warn" style="margin-top:16px;margin-bottom:0">
+        <p><b>O que o modelo não enxerga:</b> interações. Se ser jovem e morar no Norte juntos elevam o risco mais do que a soma dos dois efeitos, nenhuma das três especificações captura isso, porque a informação não existe nas fontes publicadas. Leia as combinações extremas da tabela como estimativa de ordem de grandeza. As marginais, essas sim, são reproduzidas por construção.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ V2: PROJEÇÕES ============ -->
+  <div class="page" id="proj">
+    <div class="pagehead">
+      <h1>Projeção de clientes por modalidade</h1>
+      <p><span class="s">Quantas pessoas devem usar cada produto de crédito entre 2025 e 2027</span><span class="s">A base são apenas dois pontos, dezembro de 2020 e dezembro de 2024, então a saída é um envelope de cenários e não uma previsão com intervalo estatístico</span></p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2 id="pj-title">Crédito pessoal</h2>
+        <div class="chips" id="pj-chips"></div>
+      </div>
+      <p class="panelnote" id="pj-note"></p>
+      <svg class="chart" id="pj-svg" viewBox="0 0 760 300" role="img" aria-label="Projeção de clientes em três cenários"></svg>
+      <div class="leg">
+        <span><span class="sw" style="background:#16162B"></span>Observado, 2020 e 2024</span>
+        <span><span class="sw" style="background:#4A2FB8"></span>Tendência mantida</span>
+        <span><span class="sw" style="background:#8B72EE"></span>Desaceleração</span>
+        <span><span class="sw" style="background:#C4BAF9"></span>Estagnação</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Tabela de cenários, em milhões de clientes</h3>
+      <table id="pj-table">
+        <thead><tr><th>Modalidade</th><th class="r">2024 observado</th><th class="r">Crescimento anual composto</th><th class="r">2026 desaceleração</th><th class="r">2026 tendência</th><th class="r">2027 desaceleração</th><th class="r">2027 tendência</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="t" style="margin-top:12px"><b>Definição dos cenários.</b> Tendência mantida aplica o crescimento anual composto de 2020 a 2024 a cada ano seguinte. Desaceleração corta essa taxa pela metade a cada ano, o que é o padrão típico de produto que se aproxima da saturação. Estagnação mantém o valor de 2024.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Leitura</h3>
+      <div class="ins">
+        <h4>O cenário de tendência para crédito pessoal não é plausível</h4>
+        <p id="pj-ins1"></p>
+      </div>
+      <div class="ins">
+        <h4>Como sinal antecedente, o que importa é a distância entre crédito pessoal e cartão</h4>
+        <p id="pj-ins2"></p>
+      </div>
+      <div class="warn" style="margin-bottom:0">
+        <p><b>Pré-registro:</b> a coluna de 2025 fica congelada nesta versão. Quando o Banco Central publicar o Relatório de Cidadania Financeira com base de dezembro de 2025, o erro de cada cenário pode ser medido. Esse é o único teste fora da amostra possível para este modelo, e ele ainda não aconteceu.</p>
+      </div>
+      <table style="margin-top:14px" id="pj-prereg">
+        <thead><tr><th>Modalidade</th><th class="r">2025 estagnação</th><th class="r">2025 desaceleração</th><th class="r">2025 tendência</th><th class="r">2025 observado</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ V2: VALIDAÇÃO ============ -->
+  <div class="page" id="valid">
+    <div class="pagehead">
+      <h1>Validação dos modelos</h1>
+      <p><span class="s">O que foi testado, o que passou e o que foi descartado</span><span class="s">Um modelo que não se valida não entra no dashboard como previsão</span></p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Calibração do simulador</h2><span class="pill g" id="v-pill">verificando</span></div>
+      <p class="panelnote"><span class="s">A média ponderada das previsões deve reproduzir cada taxa publicada pelo Banco Central</span><span class="s">Isto é checagem de calibração dentro da amostra, necessária mas não suficiente, já que sem microdados não existe conjunto de teste</span></p>
+      <table id="v-cal">
+        <thead><tr><th>Recorte</th><th class="r">Publicado</th><th class="r">Alvo reconciliado</th><th class="r">Logístico</th><th class="r">Aditivo</th><th class="r">Multiplicativo</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="t" style="margin-top:12px" id="v-calnote"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Consistência interna das marginais</h2></div>
+      <p class="panelnote"><span class="s">Antes de modelar, as taxas publicadas precisam fechar entre si</span><span class="s">Elas não fecham exatamente: a média ponderada por faixa etária dá menos que 16% e a por região dá mais</span><span class="s">Como o Banco Central arredonda para inteiros, cada taxa pode estar até 0,5 p.p. fora do valor real, e a correção só é aceita se couber nesse limite</span></p>
+      <table id="v-cons">
+        <thead><tr><th>Variável</th><th>Pesos usados</th><th class="r">Média reconstruída</th><th class="r">Média publicada</th><th class="r">Ajuste aplicado</th><th class="r">Arredondamento</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="t" style="margin-top:12px">Em vez de o ajuste forçar uma variável contra a outra, cada conjunto de taxas é deslocado por igual até a média nacional. Uma diferença acima de 0,5 p.p. indicaria peso errado, e não arredondamento. No caso regional, parte do desvio pode vir do proxy do Censo, já que a base de clientes por região não é publicada.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panelhead"><h2>Teste descartado: previsão do ranking do 3º trimestre</h2><span class="pill r">não publicado</span></div>
+      <p class="panelnote"><span class="s">Prever posição no próximo trimestre só faz sentido se a posição persiste de um trimestre para o outro</span><span class="s">Só cinco instituições têm posição publicada nos dois trimestres de 2026</span></p>
+      <table>
+        <thead><tr><th>Instituição</th><th class="r">Posição no 1º tri</th><th class="r">Posição no 2º tri</th><th class="r">Ordem entre as 5, 1º tri</th><th class="r">Ordem entre as 5, 2º tri</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Bradesco</td><td class="r">2º</td><td class="r">1º</td><td class="n">2</td><td class="n">1</td></tr>
+          <tr><td class="k">Banco C6</td><td class="r">1º</td><td class="r">2º</td><td class="n">1</td><td class="n">2</td></tr>
+          <tr><td class="k">Itaú</td><td class="r">7º</td><td class="r">3º</td><td class="n">3</td><td class="n">3</td></tr>
+          <tr><td class="k">Banco do Brasil</td><td class="r">12º</td><td class="r">8º</td><td class="n">5</td><td class="n">4</td></tr>
+          <tr><td class="k">Caixa Econômica Federal</td><td class="r">11º</td><td class="r">11º</td><td class="n">4</td><td class="n">5</td></tr>
+        </tbody>
+      </table>
+      <div class="g2" style="margin-top:16px">
+        <div class="stat" style="margin:0"><div class="l">Correlação de Spearman</div><div class="v">0,80 <small>Soma dos quadrados das diferenças de posição igual a 4</small></div></div>
+        <div class="stat" style="margin:0"><div class="l">Valor p exato, unicaudal</div><div class="v">0,067 <small>8 das 120 permutações possíveis produzem correlação igual ou maior. Valor crítico a 5% com n igual a 5 é 0,90</small></div></div>
+      </div>
+      <p class="t" style="margin-top:14px">A ordem parece estável, mas com cinco instituições a persistência não se distingue do acaso ao nível de 5%. Além disso, o Itaú subiu do 7º para o 3º lugar em um trimestre, e o 2º trimestre não publicou os índices, só as posições. <b>Por isso esta versão não traz previsão para o 3º trimestre.</b> O teste pode ser refeito quando a tabela completa de índices do 2º e do 3º trimestres estiver disponível, com n igual a 15.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Também avaliado e descartado</h3>
+      <ul class="li">
+        <li><b>Tendência da taxa de solução do Nubank no Consumidor.gov.br.</b> Subiu de 12,6% em janeiro para 21,6% em junho de 2026. Dois pontos sem os meses intermediários não sustentam extrapolação, e o volume cresceu 47,6% no mesmo período, o que muda o denominador.</li>
+        <li><b>Reputação no Reclame Aqui em função do tempo de resposta.</b> Só três instituições têm os dois dados. Qualquer reta passa perto de três pontos.</li>
+        <li><b>Modelo de reclamação por perfil demográfico.</b> Não há variável resposta. Nenhuma das três fontes publica quem reclama, então o simulador prevê inadimplência, que é observável, e não reclamação.</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- ============ FONTES ============ -->
   <div class="page" id="fontes">
     <div class="pagehead">
@@ -737,6 +1012,8 @@ a:hover{text-decoration:underline;}
         <li><b>Inferência demográfica.</b> As personas cruzam dados de uso de crédito com temas de reclamação. É um passo de inferência defensável, mas não é dado direto.</li>
         <li><b>Defasagem.</b> O perfil demográfico é de dezembro de 2024. O ranking de instituições vai até o 2º trimestre de 2026. Cerca de dezoito meses entre as duas camadas.</li>
         <li><b>Lacuna aberta.</b> O volume de reclamações bancárias no Consumidor.gov.br caiu 28% entre 2023 e 2024 e depois saltou 137,4% em 2026. Não há explicação disponível nas fontes consultadas.</li>
+        <li><b>Modelos sem microdados.</b> O simulador de risco é calibrado em taxas agregadas e assume ausência de interação entre idade, região e CadÚnico. Os pesos regionais usam a população do Censo 2022 como proxy da base de clientes, e o peso do CadÚnico é derivado, não publicado.</li>
+        <li><b>Projeções com dois pontos.</b> As projeções por modalidade partem de dezembro de 2020 e dezembro de 2024, sem os anos intermediários. São cenários, não previsões com intervalo de confiança.</li>
       </ul>
     </div>
 
@@ -759,6 +1036,9 @@ a:hover{text-decoration:underline;}
 
       <p class="t"><b>Consumo em Pauta</b>, "Reclamações crescem 45% em 2026, bancos lideram ranking", 21 de julho de 2026, e matéria sobre o comparativo anual de agosto de 2026.<br>
       <a href="https://www.consumoempauta.com.br/especiais/reclamacoes-crescem-45-em-2026-bancos-lideram-ranking/">consumoempauta.com.br/especiais/reclamacoes-crescem-45-em-2026-bancos-lideram-ranking</a></p>
+
+      <p class="t"><b>IBGE, Censo Demográfico 2022</b>, distribuição da população por grande região. Usado apenas como proxy de peso regional no simulador de risco.<br>
+      <a href="https://censo2022.ibge.gov.br/">censo2022.ibge.gov.br</a></p>
 
       <p class="t"><b>Reclame Aqui</b>, páginas públicas de reputação de Nubank, Itaú, Bradesco e Santander, dados de 1º de março a 31 de agosto de 2026. Números obtidos de conteúdo já indexado publicamente, sem coleta automatizada.<br>
       <a href="https://www.reclameaqui.com.br/">reclameaqui.com.br</a></p>
@@ -864,6 +1144,420 @@ a:hover{text-decoration:underline;}
   });
   var rst = document.getElementById('d-reset');
   if (rst) rst.addEventListener('click', function(){ pinta(null); });
+})();
+
+/* =================== V2: MODELOS PREDITIVOS =================== */
+(function(){
+  function num(x, d){ return x.toFixed(d == null ? 1 : d).replace('.', ','); }
+  function pct(p, d){ return num(p * 100, d) + '%'; }
+  function pp(x, d){ return (x >= 0 ? '+' : '−') + num(Math.abs(x * 100), d) + ' p.p.'; }
+
+  /* ---------- dados de entrada: marginais do Banco Central, dez/2024 ---------- */
+  var NAT = 0.16;
+  var ORDER = ['idade', 'regiao', 'cad'];
+  var VARS = {
+    idade:  {nome:'Faixa etária', lv:[
+      {k:'jovem',  l:'18 a 34 anos',     s:'18 a 34', w:.35, p:.19},
+      {k:'adulto', l:'35 a 60 anos',     s:'35 a 60', w:.45, p:.16},
+      {k:'idoso',  l:'Acima de 60 anos', s:'60+',     w:.20, p:.09}]},
+    regiao: {nome:'Região', lv:[
+      {k:'norte',       l:'Região Norte',        s:'Norte',    w:.085, p:.19},
+      {k:'nordeste',    l:'Região Nordeste',     s:'Nordeste', w:.269, p:.17},
+      {k:'sudeste',     l:'Região Sudeste',      s:'Sudeste',  w:.418, p:.16},
+      {k:'centrooeste', l:'Região Centro Oeste', s:'C. Oeste', w:.080, p:.16},
+      {k:'sul',         l:'Região Sul',          s:'Sul',      w:.147, p:.14}]},
+    cad:    {nome:'CadÚnico', lv:[
+      {k:'sim', l:'Inscritos no CadÚnico', s:'Inscrito',     w:.5, p:.18},
+      {k:'nao', l:'Não inscritos',         s:'Não inscrito', w:.5, p:.14}]}
+  };
+  ORDER.forEach(function(v){
+    var s = 0; VARS[v].lv.forEach(function(x){ s += x.w; });
+    VARS[v].lv.forEach(function(x){ x.w /= s; });
+    // taxas publicadas são arredondadas a inteiros e não fecham exatamente em 16%;
+    // desloca cada variável para a média nacional e confere se cabe no arredondamento
+    var m = 0; VARS[v].lv.forEach(function(x){ m += x.w * x.p; });
+    VARS[v].shift = NAT - m;
+    VARS[v].lv.forEach(function(x){ x.t = x.p + VARS[v].shift; });
+  });
+
+  var CELLS = [];
+  VARS.idade.lv.forEach(function(a, i){
+    VARS.regiao.lv.forEach(function(r, j){
+      VARS.cad.lv.forEach(function(c, k){
+        CELLS.push({idx:{idade:i, regiao:j, cad:k}, w:a.w * r.w * c.w});
+      });
+    });
+  });
+
+  /* ---------- três especificações, ajustadas por ajuste proporcional iterativo ---------- */
+  var clamp = function(p){ return Math.min(Math.max(p, 1e-4), 0.9999); };
+  var SPECS = {
+    logit: {nome:'Logística', desc:'soma no log da chance',
+            link:function(p){ return Math.log(p / (1 - p)); },
+            inv:function(z){ return 1 / (1 + Math.exp(-z)); }},
+    adit:  {nome:'Aditiva', desc:'soma na probabilidade',
+            link:function(p){ return p; }, inv:clamp},
+    mult:  {nome:'Multiplicativa', desc:'produto dos riscos relativos',
+            link:Math.log, inv:function(z){ return clamp(Math.exp(z)); }}
+  };
+  var SPEC_KEYS = ['logit', 'adit', 'mult'];
+
+  function fit(key){
+    var S = SPECS[key], b0 = S.link(NAT), co = {};
+    ORDER.forEach(function(v){ co[v] = VARS[v].lv.map(function(){ return 0; }); });
+    function cell(idx){
+      var z = b0; ORDER.forEach(function(v){ z += co[v][idx[v]]; }); return S.inv(z);
+    }
+    for (var it = 0; it < 400; it++){
+      ORDER.forEach(function(v){
+        VARS[v].lv.forEach(function(lv, l){
+          var a = 0, b = 0;
+          CELLS.forEach(function(c){ if (c.idx[v] === l){ a += c.w * cell(c.idx); b += c.w; } });
+          co[v][l] += S.link(lv.t) - S.link(a / b);
+        });
+      });
+    }
+    return {cell:cell, co:co};
+  }
+  var M = {}; SPEC_KEYS.forEach(function(k){ M[k] = fit(k); });
+
+  // sel: {idade: índice ou null, ...}; null marginaliza pela distribuição da base
+  function predict(key, sel){
+    var a = 0, b = 0;
+    CELLS.forEach(function(c){
+      var ok = ORDER.every(function(v){ return sel[v] == null || sel[v] === c.idx[v]; });
+      if (ok){ a += c.w * M[key].cell(c.idx); b += c.w; }
+    });
+    return a / b;
+  }
+
+  /* ---------- simulador ---------- */
+  var sel = {idade:null, regiao:null, cad:null};
+  var persona = null;
+
+  ORDER.forEach(function(v){
+    var box = document.querySelector('.seg[data-var="' + v + '"]');
+    var opts = [{l:'Todos', i:null}].concat(VARS[v].lv.map(function(x, i){ return {l:x.s, i:i}; }));
+    opts.forEach(function(o){
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = o.l;
+      b.setAttribute('data-i', o.i == null ? '' : o.i);
+      b.addEventListener('click', function(){ sel[v] = o.i; persona = null; render(); });
+      box.appendChild(b);
+    });
+  });
+
+  var PERSONAS = {
+    apos:   {sel:{idade:2, regiao:null, cad:null},
+             note:'Região e CadÚnico ficam em Todos porque a persona não fixa essas variáveis.'},
+    jovem:  {sel:{idade:0, regiao:null, cad:null},
+             note:'Região e CadÚnico ficam em Todos porque a persona não fixa essas variáveis.'},
+    mulher: {sel:{idade:1, regiao:0, cad:null},
+             note:'Gênero não entra no modelo. O Banco Central publica comprometimento de renda por gênero, mas não inadimplência.'}
+  };
+  document.querySelectorAll('.pbtn[data-persona]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var P = PERSONAS[b.getAttribute('data-persona')];
+      sel = {idade:P.sel.idade, regiao:P.sel.regiao, cad:P.sel.cad};
+      persona = P; render();
+    });
+  });
+
+  var G_MIN = .05, G_MAX = .30;
+  function gpos(p){ return Math.min(Math.max((p - G_MIN) / (G_MAX - G_MIN), 0), 1) * 100; }
+
+  function render(){
+    ORDER.forEach(function(v){
+      document.querySelectorAll('.seg[data-var="' + v + '"] button').forEach(function(b){
+        var i = b.getAttribute('data-i');
+        b.classList.toggle('on', (i === '' ? null : +i) === sel[v]);
+      });
+    });
+
+    var est = {}; SPEC_KEYS.forEach(function(k){ est[k] = predict(k, sel); });
+    var p = est.logit;
+    var lo = Math.min(est.logit, est.adit, est.mult), hi = Math.max(est.logit, est.adit, est.mult);
+
+    document.getElementById('r-p').textContent = pct(p);
+    var rr = document.getElementById('r-rr'), ratio = p / NAT;
+    rr.textContent = num(ratio, 2) + '× a média';
+    rr.className = 'pill ' + (ratio > 1.05 ? 'r' : ratio < .95 ? 'g' : 'p');
+    document.getElementById('r-band').textContent = (hi - lo < .0005)
+      ? 'As três especificações coincidem neste recorte, porque ele é uma marginal publicada'
+      : 'Faixa entre especificações: ' + pct(lo) + ' a ' + pct(hi);
+
+    var rng = document.getElementById('r-rng');
+    rng.style.left = gpos(lo) + '%';
+    rng.style.width = Math.max(gpos(hi) - gpos(lo), 0) + '%';
+    document.getElementById('r-pt').style.left = gpos(p) + '%';
+    document.getElementById('r-nat').style.left = gpos(NAT) + '%';
+
+    // decomposição sequencial: nacional -> + idade -> + região -> + CadÚnico
+    var steps = [], acc = {idade:null, regiao:null, cad:null}, prev = NAT;
+    ORDER.forEach(function(v){
+      if (sel[v] == null) return;
+      acc[v] = sel[v];
+      var cur = predict('logit', acc);
+      steps.push({l:VARS[v].lv[sel[v]].l, d:cur - prev});
+      prev = cur;
+    });
+    var SC = .08, html = '<div class="bar-row"><div class="bar-lbl">Média nacional</div>' +
+      '<div class="bar-tr" style="background:transparent"></div><div class="bar-v">' + pct(NAT) + '</div></div>';
+    steps.forEach(function(s){
+      var w = Math.min(Math.abs(s.d) / SC, 1) * 50;
+      var left = s.d >= 0 ? 50 : 50 - w;
+      html += '<div class="bar-row"><div class="bar-lbl">' + s.l + '</div>' +
+        '<div class="bar-tr" style="background:linear-gradient(90deg,var(--white) calc(50% - 1px),var(--line) calc(50% - 1px),var(--line) calc(50% + 1px),var(--white) calc(50% + 1px))">' +
+        '<div class="bar-fl ' + (s.d >= 0 ? 'hot' : 'neg') + '" style="left:' + left + '%;width:' + w + '%"></div></div>' +
+        '<div class="bar-v">' + pp(s.d) + '</div></div>';
+    });
+    document.getElementById('r-wf').innerHTML = html;
+    document.getElementById('r-wfnote').textContent = steps.length
+      ? 'Contribuições calculadas em sequência, na ordem idade, região e CadÚnico. Mudar a ordem redistribui levemente as parcelas, não o total.' +
+        (persona ? ' ' + persona.note : '')
+      : 'Nenhuma variável fixada: a estimativa é a média nacional.';
+
+    var tb = document.querySelector('#r-models tbody'); tb.innerHTML = '';
+    SPEC_KEYS.forEach(function(k){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="k">' + SPECS[k].nome + (k === 'logit' ? ' <span class="pill p">principal</span>' : '') +
+        '</td><td>' + SPECS[k].desc + '</td><td class="n">' + pct(est[k]) + '</td>';
+      tb.appendChild(tr);
+    });
+
+    paintHeat();
+  }
+
+  /* ---------- mapa de calor ---------- */
+  var hmCad = 0;
+  var ALLP = CELLS.map(function(c){ return M.logit.cell(c.idx); });
+  var PMIN = Math.min.apply(null, ALLP), PMAX = Math.max.apply(null, ALLP);
+  var STOPS = [[240,236,254],[196,186,249],[139,114,238],[74,47,184]];
+  function color(t){
+    var x = t * (STOPS.length - 1), i = Math.min(Math.floor(x), STOPS.length - 2), f = x - i;
+    var c = STOPS[i].map(function(v, j){ return Math.round(v + (STOPS[i + 1][j] - v) * f); });
+    return 'rgb(' + c.join(',') + ')';
+  }
+
+  function paintHeat(){
+    var t = document.getElementById('hm'), h = '<thead><tr><th></th>';
+    VARS.regiao.lv.forEach(function(r){ h += '<th>' + r.s + '</th>'; });
+    h += '</tr></thead><tbody>';
+    VARS.idade.lv.forEach(function(a, i){
+      h += '<tr><th class="rh">' + a.l + '</th>';
+      VARS.regiao.lv.forEach(function(r, j){
+        var p = M.logit.cell({idade:i, regiao:j, cad:hmCad}), tt = (p - PMIN) / (PMAX - PMIN);
+        var on = sel.idade === i && sel.regiao === j && sel.cad === hmCad;
+        h += '<td class="c' + (on ? ' sel' : '') + '" tabindex="0" data-i="' + i + '" data-j="' + j + '" ' +
+          'style="background:' + color(tt) + ';color:' + (tt > .5 ? '#fff' : 'var(--ink)') + '" ' +
+          'aria-label="' + a.l + ', ' + r.l + ': ' + pct(p) + '">' + pct(p) + '</td>';
+      });
+      h += '</tr>';
+    });
+    t.innerHTML = h + '</tbody>';
+    t.querySelectorAll('td.c').forEach(function(td){
+      function go(){
+        sel = {idade:+td.getAttribute('data-i'), regiao:+td.getAttribute('data-j'), cad:hmCad};
+        persona = null; render();
+        document.getElementById('risco').scrollIntoView({behavior:'smooth'});
+      }
+      td.addEventListener('click', go);
+      td.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+    });
+  }
+  document.querySelectorAll('#hm-cad .chip').forEach(function(c, i, all){
+    c.addEventListener('click', function(){
+      all.forEach(function(x){ x.classList.remove('on'); });
+      c.classList.add('on');
+      hmCad = c.getAttribute('data-cad') === 'sim' ? 0 : 1;
+      paintHeat();
+    });
+  });
+
+  function cellLabel(c){
+    return VARS.idade.lv[c.idx.idade].l.toLowerCase() + ', ' + VARS.regiao.lv[c.idx.regiao].l.replace('Região ', '') +
+      ', ' + (c.idx.cad === 0 ? 'inscrito no CadÚnico' : 'fora do CadÚnico');
+  }
+  var iMax = ALLP.indexOf(PMAX), iMin = ALLP.indexOf(PMIN);
+  document.getElementById('hm-ins-t').textContent =
+    'O perfil de maior risco tem ' + num(PMAX / PMIN, 1) + ' vezes a chance prevista do de menor risco';
+  document.getElementById('hm-ins-p').textContent =
+    'Maior: ' + cellLabel(CELLS[iMax]) + ', ' + pct(PMAX) + '. Menor: ' + cellLabel(CELLS[iMin]) + ', ' + pct(PMIN) +
+    '. A idade pesa mais que a região: a distância entre faixas etárias é de 10 pontos percentuais nas marginais, a entre regiões é de 5. ' +
+    'Os extremos são as células mais dependentes da hipótese de ausência de interação.';
+
+  /* ---------- validação ---------- */
+  var maxErr = 0, maxPub = 0, cal = document.querySelector('#v-cal tbody');
+  ORDER.forEach(function(v){
+    VARS[v].lv.forEach(function(lv, l){
+      var s = {idade:null, regiao:null, cad:null}; s[v] = l;
+      var row = '<td class="k">' + lv.l + '</td><td class="n">' + pct(lv.p) + '</td><td class="r">' + pct(lv.t, 2) + '</td>';
+      SPEC_KEYS.forEach(function(k){
+        var e = predict(k, s);
+        maxErr = Math.max(maxErr, Math.abs(e - lv.t));
+        maxPub = Math.max(maxPub, Math.abs(e - lv.p));
+        row += '<td class="r">' + pct(e, 2) + '</td>';
+      });
+      var tr = document.createElement('tr'); tr.innerHTML = row; cal.appendChild(tr);
+    });
+  });
+  // aprovado se reproduz o alvo reconciliado e fica dentro do arredondamento da taxa publicada
+  var okCal = maxErr < .0005 && maxPub <= .005 + 1e-9;
+  var pill = document.getElementById('v-pill');
+  pill.textContent = okCal ? 'calibrado' : 'fora da tolerância';
+  pill.className = 'pill ' + (okCal ? 'g' : 'r');
+  document.getElementById('v-calnote').textContent =
+    'Maior desvio frente ao alvo reconciliado: ' + num(maxErr * 100, 3) + ' p.p. Maior desvio frente à taxa publicada: ' +
+    num(maxPub * 100, 2) + ' p.p., dentro dos 0,5 p.p. de arredondamento.';
+
+  var cons = document.querySelector('#v-cons tbody');
+  ORDER.forEach(function(v){
+    var sh = VARS[v].shift, tr = document.createElement('tr');
+    tr.innerHTML = '<td class="k">' + VARS[v].nome + '</td><td>' +
+      VARS[v].lv.map(function(x){ return pct(x.w, 1); }).join(', ') + '</td><td class="n">' + pct(NAT - sh, 2) +
+      '</td><td class="r">16,00%</td><td class="r">' + pp(sh, 2) + '</td><td class="r">' +
+      (Math.abs(sh) <= .005 ? '<span class="okx">cabe</span>' : '<span class="nokx">não cabe</span>') + '</td>';
+    cons.appendChild(tr);
+  });
+
+  document.getElementById('ov-range').innerHTML = pct(PMIN) + ' a ' + pct(PMAX) +
+    ' <small>entre as 30 combinações de idade, região e CadÚnico</small>';
+  document.getElementById('ov-err').innerHTML = num(maxPub * 100, 2) + ' p.p. <small>maior desvio frente à taxa publicada, dentro do arredondamento de 0,5 p.p. do Banco Central</small>';
+
+  render();
+
+  /* =================== PROJEÇÕES =================== */
+  var MODS = [
+    {k:'pessoal', l:'Crédito pessoal',           s:'Pessoal',     v24:41.7, v20:13.3},
+    {k:'cartao',  l:'Dívida no cartão',          s:'Cartão',      v24:52.8, v20:52.8 / 1.55},
+    {k:'cheque',  l:'Cheque especial',           s:'Cheque',      v24:24.3, v20:24.3 / 1.20},
+    {k:'consig',  l:'Crédito consignado',        s:'Consignado',  v24:24.0, v20:24.0 / 1.20},
+    {k:'auto',    l:'Financiamento automotivo',  s:'Automotivo',  v24:9.7,  v20:9.7 / 1.03},
+    {k:'imob',    l:'Financiamento imobiliário', s:'Imobiliário', v24:9.1,  v20:9.1 / 1.23}
+  ];
+  MODS.forEach(function(m){
+    m.g = Math.pow(m.v24 / m.v20, 1 / 4) - 1;
+    m.trend = function(t){ return m.v24 * Math.pow(1 + m.g, t); };
+    m.decel = function(t){ var v = m.v24; for (var i = 1; i <= t; i++) v *= 1 + m.g * Math.pow(.5, i); return v; };
+    m.stag  = function(){ return m.v24; };
+  });
+  function mi(x){ return num(x) + ' mi'; }
+
+  var pjChips = document.getElementById('pj-chips'), cur = MODS[0];
+  MODS.forEach(function(m, i){
+    var b = document.createElement('button');
+    b.className = 'chip' + (i === 0 ? ' on' : ''); b.type = 'button'; b.textContent = m.s;
+    b.addEventListener('click', function(){
+      pjChips.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); cur = m; drawProj();
+    });
+    pjChips.appendChild(b);
+  });
+
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, text){
+    var e = document.createElementNS(NS, tag);
+    for (var a in attrs) e.setAttribute(a, attrs[a]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function drawProj(){
+    var m = cur, svg = document.getElementById('pj-svg');
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var W = 760, H = 300, L = 48, R = 150, T = 18, B = 32;
+    var raw = m.trend(3) * 1.1, step = [1, 2, 5, 10, 20, 25, 50].filter(function(s){ return raw / s <= 5; })[0];
+    var yMax = Math.ceil(raw / step) * step;
+    var x = function(yr){ return L + (yr - 2020) / 7 * (W - L - R); };
+    var y = function(v){ return T + (1 - v / yMax) * (H - T - B); };
+
+    for (var v = 0; v <= yMax + 1e-9; v += step){
+      svg.appendChild(el('line', {x1:L, x2:W - R, y1:y(v), y2:y(v), class:'ax'}));
+      svg.appendChild(el('text', {x:L - 8, y:y(v) + 4, 'text-anchor':'end'}, num(v, 0)));
+    }
+    for (var yr = 2020; yr <= 2027; yr++){
+      svg.appendChild(el('text', {x:x(yr), y:H - 10, 'text-anchor':'middle'}, yr));
+    }
+    svg.appendChild(el('line', {x1:x(2024), x2:x(2024), y1:T, y2:H - B, stroke:'#8A8AA3', 'stroke-dasharray':'3 4'}));
+    svg.appendChild(el('text', {x:x(2024) + 6, y:T + 10}, 'último dado'));
+
+    var yrs = [0, 1, 2, 3];
+    var top = yrs.map(function(t){ return x(2024 + t) + ',' + y(m.trend(t)); });
+    var bot = yrs.slice().reverse().map(function(t){ return x(2024 + t) + ',' + y(m.stag(t)); });
+    svg.appendChild(el('polygon', {points:top.concat(bot).join(' '), fill:'#F0ECFE'}));
+
+    svg.appendChild(el('line', {x1:x(2020), y1:y(m.v20), x2:x(2024), y2:y(m.v24), stroke:'#16162B', 'stroke-width':1.5, 'stroke-dasharray':'2 5'}));
+    svg.appendChild(el('text', {x:(x(2020) + x(2024)) / 2, y:y((m.v20 + m.v24) / 2) + 22, 'text-anchor':'start'}, 'anos intermediários não publicados'));
+
+    var SER = [
+      {f:m.stag,  c:'#C4BAF9', n:'Estagnação'},
+      {f:m.decel, c:'#8B72EE', n:'Desaceleração'},
+      {f:m.trend, c:'#4A2FB8', n:'Tendência'}
+    ];
+    SER.forEach(function(s){
+      svg.appendChild(el('polyline', {points:yrs.map(function(t){ return x(2024 + t) + ',' + y(s.f(t)); }).join(' '),
+        fill:'none', stroke:s.c, 'stroke-width':2.5, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+      yrs.slice(1).forEach(function(t){
+        var dot = el('circle', {cx:x(2024 + t), cy:y(s.f(t)), r:3.5, fill:s.c});
+        dot.appendChild(el('title', {}, s.n + ', ' + (2024 + t) + ': ' + mi(s.f(t))));
+        svg.appendChild(dot);
+      });
+    });
+
+    // rótulos finais sem sobreposição
+    var labs = SER.map(function(s){ return {y:y(s.f(3)), t:s.n + ' ' + mi(s.f(3)), c:s.c}; })
+      .sort(function(a, b){ return a.y - b.y; });
+    for (var i = 1; i < labs.length; i++) if (labs[i].y - labs[i - 1].y < 15) labs[i].y = labs[i - 1].y + 15;
+    labs.forEach(function(lb){
+      var t = el('text', {x:x(2027) + 10, y:lb.y + 4}, lb.t);
+      t.style.fill = '#16162B'; t.style.fontWeight = '600';
+      svg.appendChild(t);
+    });
+
+    [[2020, m.v20], [2024, m.v24]].forEach(function(o){
+      var dot = el('circle', {cx:x(o[0]), cy:y(o[1]), r:5, fill:'#16162B', stroke:'#fff', 'stroke-width':2});
+      dot.appendChild(el('title', {}, 'Observado ' + o[0] + ': ' + mi(o[1])));
+      svg.appendChild(dot);
+      var t = el('text', {x:x(o[0]), y:y(o[1]) - 12, 'text-anchor':'middle'}, mi(o[1]));
+      t.style.fill = '#16162B'; t.style.fontWeight = '600';
+      svg.appendChild(t);
+    });
+
+    document.getElementById('pj-title').textContent = m.l;
+    document.getElementById('pj-note').innerHTML =
+      '<span class="s">Crescimento anual composto de ' + pct(m.g) + ' entre 2020 e 2024, variação acumulada de +' + pct(m.v24 / m.v20 - 1, 0) + '</span>' +
+      '<span class="s">Em 2027 o envelope vai de ' + mi(m.stag(3)) + ' a ' + mi(m.trend(3)) + ' de clientes</span>';
+  }
+
+  var pt = document.querySelector('#pj-table tbody'), pr = document.querySelector('#pj-prereg tbody');
+  MODS.forEach(function(m){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="k">' + m.l + '</td><td class="n">' + num(m.v24) + '</td><td class="r">' + pct(m.g) +
+      '</td><td class="r">' + num(m.decel(2)) + '</td><td class="r">' + num(m.trend(2)) +
+      '</td><td class="r">' + num(m.decel(3)) + '</td><td class="n">' + num(m.trend(3)) + '</td>';
+    pt.appendChild(tr);
+    var tr2 = document.createElement('tr');
+    tr2.innerHTML = '<td class="k">' + m.l + '</td><td class="r">' + num(m.stag(1)) + '</td><td class="r">' + num(m.decel(1)) +
+      '</td><td class="r">' + num(m.trend(1)) + '</td><td class="r"><span class="gapx">aguardando Banco Central</span></td>';
+    pr.appendChild(tr2);
+  });
+
+  var P = MODS[0], C = MODS[1], cross = null;
+  for (var t = 1; t <= 3; t++) if (cross == null && P.trend(t) > C.trend(t)) cross = 2024 + t;
+  document.getElementById('pj-ins1').textContent =
+    'Mantido o ritmo de ' + pct(P.g) + ' ao ano, o crédito pessoal chegaria a ' + mi(P.trend(3)) + ' de clientes em 2027, ' +
+    num(P.trend(3) / P.v20, 1) + ' vezes a base de 2020 e perto de dois terços da população adulta do Censo 2022. ' +
+    'Crescimento composto dessa ordem não se sustenta por muitos anos em um produto de massa, por isso a desaceleração, com ' +
+    mi(P.decel(3)) + ' em 2027, é o cenário de referência.';
+  document.getElementById('pj-ins2').textContent =
+    (cross ? 'No cenário de tendência, o crédito pessoal ultrapassa a dívida no cartão em ' + cross + '. ' : '') +
+    'No de desaceleração, a distância entre as duas bases cai de ' + mi(C.v24 - P.v24) + ' em 2024 para ' +
+    mi(C.decel(3) - P.decel(3)) + ' em 2027. Hipótese, não confirmada: como o público do crédito pessoal se sobrepõe ao jovem e digital, ' +
+    'o tema deve ganhar peso primeiro no Consumidor.gov.br, antes de aparecer no ranking do Banco Central.';
+  document.getElementById('ov-proj').innerHTML = mi(P.decel(2)) + ' a ' + mi(P.trend(2)) +
+    ' <small>entre desaceleração e tendência mantida, contra ' + mi(P.v24) + ' em 2024</small>';
+
+  drawProj();
 })();
 </script>
 </body>
