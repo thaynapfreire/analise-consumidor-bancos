@@ -71,13 +71,27 @@ footer a{color:var(--p2);text-decoration:none;}
     <h1>Análise de Dados do consumidor de Bancos Brasileiros</h1>
     <p>Documentação técnica e metodológica do dashboard</p>
   </div>
-  <div class="vers"><b>Versão 2</b>15 de setembro de 2026<br>Dados: dez/2024 a ago/2026</div>
+  <div class="vers"><b>Versão 2 · camada preditiva</b>17 de setembro de 2026<br>Dados: dez/2020 a ago/2026</div>
 </header>
 
 <section>
   <h2>1. O que é e para que serve</h2>
   <p>Leitura comparada de três bases públicas sobre reclamação bancária no Brasil. O objetivo não é ranquear instituições, e sim expor que as fontes disponíveis respondem a perguntas diferentes e chegam a conclusões incompatíveis sobre o mesmo banco. O dashboard existe para tornar essa divergência visível e explicável, e para sustentar as decisões de produto derivadas dela.</p>
+  <p>A versão 2 acrescenta uma <b>camada preditiva</b> com três entregas: um simulador de risco de inadimplência, uma projeção de clientes por modalidade de crédito até 2027 e um bloco de validação que registra o que foi testado, o que passou e o que foi descartado. Como os dados públicos são agregados, nenhum modelo foi treinado em registros individuais, e cada um declara o que assume, quanto erra e o que não consegue prever.</p>
   <p>Público: times de produto, dados e estratégia que precisam decidir o que é possível afirmar com dado público brasileiro. Não é ferramenta de recomendação de banco para consumidor final.</p>
+</section>
+
+<section>
+  <h2>Estrutura do dashboard</h2>
+  <table>
+    <thead><tr><th>Grupo</th><th>Seções</th><th>O que entrega</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Leitura das fontes</td><td>Visão geral, Banco Central, Consumidor.gov.br, Reclame Aqui</td><td>Indicadores de cada base isolada, com o que cada uma não responde</td></tr>
+      <tr><td class="k">Cruzamento e perfil</td><td>Cruzamento, Perfil de crédito, Personas</td><td>Divergência entre fontes, mapa de regiões clicável e três perfis derivados do uso de crédito</td></tr>
+      <tr><td class="k">Modelos preditivos <span class="tag d">novo</span></td><td>Simulador de risco, Projeções, Validação</td><td>Probabilidade de inadimplência por perfil, cenários até 2027 e testes de cada modelo</td></tr>
+      <tr><td class="k">Referência</td><td>Limitações e fontes</td><td>Vieses, fontes primárias e secundárias, itens descartados</td></tr>
+    </tbody>
+  </table>
 </section>
 
 <section>
@@ -89,7 +103,8 @@ footer a{color:var(--p2);text-decoration:none;}
       <tr><td class="k">Banco Central<br>RDR</td><td>Oficial, regulatória</td><td>Volume bruto de acessos aos canais de atendimento ao cidadão</td><td>Contagem absoluta</td><td>2024</td></tr>
       <tr><td class="k">Consumidor.gov.br</td><td>Oficial, consensual</td><td>Volume registrado, taxa de resposta, índice de solução autodeclarado, nota de satisfação</td><td>Contagem absoluta mensal</td><td>2018 a jul/2026</td></tr>
       <tr><td class="k">Reclame Aqui</td><td>Privada, comercial</td><td>Reputação composta, que pondera taxa e velocidade de resposta além de resolução</td><td>Não publicado</td><td>mar a ago/2026</td></tr>
-      <tr><td class="k">Banco Central<br>Cidadania Financeira</td><td>Oficial, estatística</td><td>Perfil de uso de crédito por idade, gênero, região e faixa de renda</td><td>Clientes do sistema financeiro</td><td>dez/2024</td></tr>
+      <tr><td class="k">Banco Central<br>Cidadania Financeira</td><td>Oficial, estatística</td><td>Perfil de uso de crédito por idade, gênero, região e faixa de renda. Base de calibração do simulador e das projeções</td><td>Clientes do sistema financeiro</td><td>dez/2020 e dez/2024</td></tr>
+      <tr><td class="k">IBGE<br>Censo 2022</td><td>Oficial, estatística</td><td>Distribuição da população por grande região. Usado só como proxy de peso regional no simulador</td><td>População residente</td><td>2022</td></tr>
     </tbody>
   </table>
   <div class="note"><p><b>Restrição de coleta:</b> os números do Reclame Aqui vieram exclusivamente de conteúdo público já indexado, sem coleta automatizada das páginas da plataforma, em respeito aos termos de uso. Isso limita a cobertura a quatro instituições, contra quinze no ranking do Banco Central.</p></div>
@@ -135,20 +150,97 @@ footer a{color:var(--p2);text-decoration:none;}
 </section>
 </div>
 
+<section>
+  <h2>5. Camada preditiva</h2>
+  <div class="rule"><p><b>Princípio:</b> um modelo que não se valida não entra no dashboard como previsão. Por isso a camada preditiva tem três blocos e não quatro: a previsão do ranking do 3º trimestre foi testada, reprovada e ficou de fora.</p></div>
+</section>
+
 <div class="cols">
 <section>
-  <h2>5. Regras de linguagem aplicadas</h2>
+  <h3>5.1 Simulador de risco de inadimplência</h3>
+  <p>Estima a probabilidade de um cliente pessoa física com crédito ativo ter ativo problemático, dado <b>faixa etária</b> (3 níveis), <b>região</b> (5) e <b>inscrição no CadÚnico</b> (2), o que gera 30 combinações. O Banco Central publica cada recorte separadamente, nunca cruzado, então o modelo reconstrói as combinações a partir das marginais.</p>
+  <pre>logit(p) = b0 + idade[i] + regiao[j] + cadunico[k]
+
+b0        = logit(16%)   media nacional
+ajuste    = proporcional iterativo (raking), 400 rodadas
+            a cada rodada, cada coeficiente e corrigido
+            ate a media ponderada das previsoes
+            reproduzir a taxa publicada do recorte
+pesos     = idade 35/45/20, regiao Censo 2022,
+            CadUnico 50/50 (derivado)</pre>
+  <p>Com as marginais fixas e sem informação sobre interações, é a solução de máxima entropia. Duas especificações alternativas são ajustadas pelo mesmo procedimento: <b>aditiva</b> (soma na probabilidade) e <b>multiplicativa</b> (produto de riscos relativos). As três reproduzem as marginais e só discordam nas combinações. Essa discordância é a faixa exibida em volta da estimativa, e <b>não é intervalo de confiança amostral</b>.</p>
+  <table>
+    <thead><tr><th>Insumo</th><th>Valor</th><th>Origem</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Inadimplência por idade</td><td>19%, 16%, 9%</td><td>Banco Central, dez/2024</td></tr>
+      <tr><td class="k">Inadimplência por região</td><td>N 19%, NE 17%, SE 16%, CO 16%, S 14%</td><td>Banco Central, dez/2024</td></tr>
+      <tr><td class="k">Inadimplência por CadÚnico</td><td>18% e 14%</td><td>Banco Central, dez/2024</td></tr>
+      <tr><td class="k">Peso regional</td><td>8,5%, 26,9%, 41,8%, 8,0%, 14,7%</td><td><span class="tag">proxy</span>Censo 2022</td></tr>
+      <tr><td class="k">Peso do CadÚnico</td><td>50% e 50%</td><td><span class="tag">derivado</span>único valor que fecha em 16%</td></tr>
+    </tbody>
+  </table>
+  <h3>Resultado</h3>
+  <p>As estimativas vão de <b>6,8%</b> (acima de 60 anos, Sul, fora do CadÚnico) a <b>25,2%</b> (18 a 34 anos, Norte, inscrito no CadÚnico), uma razão de 3,7 vezes. A idade pesa mais que a região: 10 p.p. de distância entre faixas etárias nas marginais, contra 5 p.p. entre regiões. O simulador também carrega as três personas como perfis prontos.</p>
+</section>
+
+<section>
+  <h3>5.2 Projeção de clientes por modalidade</h3>
+  <p>Estima quantas pessoas devem usar cada produto de crédito entre 2025 e 2027. A base são apenas <b>dois pontos observados</b>, dez/2020 e dez/2024, sem os anos intermediários. Com dois pontos não há como estimar intervalo estatístico, então a saída é um <b>envelope de cenários</b>.</p>
+  <table>
+    <thead><tr><th>Cenário</th><th>Regra</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Tendência mantida</td><td>Aplica o crescimento anual composto de 2020 a 2024 a cada ano seguinte</td></tr>
+      <tr><td class="k">Desaceleração</td><td>Corta a taxa pela metade a cada ano, padrão de produto perto da saturação. <b>Cenário de referência</b></td></tr>
+      <tr><td class="k">Estagnação</td><td>Mantém o valor de 2024</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>Modalidade, mi</th><th>2024</th><th>Cresc. anual</th><th>2027 desacel.</th><th>2027 tendência</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Crédito pessoal</td><td>41,7</td><td>33,1%</td><td>54,8</td><td>98,3</td></tr>
+      <tr><td class="k">Dívida no cartão</td><td>52,8</td><td>11,6%</td><td>58,3</td><td>73,3</td></tr>
+      <tr><td class="k">Cheque especial</td><td>24,3</td><td>4,7%</td><td>25,3</td><td>27,9</td></tr>
+      <tr><td class="k">Crédito consignado</td><td>24,0</td><td>4,7%</td><td>25,0</td><td>27,5</td></tr>
+      <tr><td class="k">Fin. automotivo</td><td>9,7</td><td>0,7%</td><td>9,8</td><td>9,9</td></tr>
+      <tr><td class="k">Fin. imobiliário</td><td>9,1</td><td>5,3%</td><td>9,5</td><td>10,6</td></tr>
+    </tbody>
+  </table>
+  <p><b>Leitura:</b> o cenário de tendência para crédito pessoal não é plausível, porque chegaria a 98,3 milhões em 2027, cerca de dois terços da população adulta. O sinal antecedente é a distância entre crédito pessoal e cartão: na tendência, o crédito pessoal ultrapassa o cartão em 2026; na desaceleração, a distância cai de 11,1 mi em 2024 para 3,5 mi em 2027.</p>
+  <div class="note"><p><b>Pré registro:</b> a coluna de 2025 está congelada nesta versão. Quando o Banco Central publicar o Relatório de Cidadania Financeira com base de dez/2025, o erro de cada cenário será medido. É o único teste fora da amostra possível para este modelo, e ele ainda não aconteceu.</p></div>
+</section>
+</div>
+
+<section>
+  <h2>6. Validação dos modelos</h2>
+  <table>
+    <thead><tr><th>Teste</th><th>O que verifica</th><th>Resultado</th><th>Decisão</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Consistência das marginais</td><td>Se as taxas publicadas fecham na média nacional de 16% com os pesos usados. Como o Banco Central arredonda para inteiros, cada taxa pode estar até 0,5 p.p. fora do valor real</td><td>Idade reconstrói 15,65% (ajuste de +0,35 p.p.). Região reconstrói 16,23% (ajuste de 0,23 p.p. para baixo). CadÚnico fecha exato</td><td><span class="tag">aprovado</span>os dois ajustes cabem no arredondamento</td></tr>
+      <tr><td class="k">Calibração do simulador</td><td>Se a média ponderada das previsões reproduz cada taxa publicada, nas três especificações</td><td>Desvio praticamente nulo frente ao alvo reconciliado. Maior desvio frente à taxa publicada: 0,35 p.p.</td><td><span class="tag">aprovado</span>checagem dentro da amostra, necessária mas não suficiente</td></tr>
+      <tr><td class="k">Persistência do ranking do Banco Central</td><td>Se a posição de um trimestre prevê a do seguinte, pré requisito para prever o 3º tri de 2026</td><td>Spearman de 0,80 com n igual a 5 instituições. Valor p exato unicaudal de 0,067 (8 de 120 permutações). Valor crítico a 5% é 0,90</td><td><span class="tag d">descartado</span>previsão do 3º tri não publicada</td></tr>
+      <tr><td class="k">Taxa de solução do Nubank</td><td>Tendência no Consumidor.gov.br, de 12,6% em jan a 21,6% em jun/2026</td><td>Dois pontos sem meses intermediários, com volume subindo 47,6% no período</td><td><span class="tag d">descartado</span></td></tr>
+      <tr><td class="k">Reputação x tempo de resposta</td><td>Relação no Reclame Aqui</td><td>Só três instituições têm os dois dados. Qualquer reta passa perto de três pontos</td><td><span class="tag d">descartado</span></td></tr>
+      <tr><td class="k">Reclamação por perfil demográfico</td><td>Modelo de quem reclama</td><td>Não existe variável resposta: nenhuma fonte publica demografia do reclamante</td><td><span class="tag d">descartado</span>o simulador prevê inadimplência, que é observável</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="cols">
+<section>
+  <h2>7. Regras de linguagem aplicadas</h2>
   <ul>
     <li>A expressão <b>melhor banco</b> não é usada em nenhum ponto. A formulação é: entre as instituições com dados públicos disponíveis, a que apresenta menor índice de determinado indicador.</li>
     <li>Toda afirmação sobre reclamação vem acompanhada do viés estrutural da fonte que a originou.</li>
     <li>Onde não há base, está escrito <b>sem dado</b> ou <b>não publicado</b>. Nenhuma célula foi preenchida por estimativa ou interpolação.</li>
     <li>Números que não puderam ser confirmados em fonte primária estão identificados como vindos de fonte secundária que cita a origem oficial.</li>
     <li>Inferências estão marcadas como inferência, separadas do que as fontes afirmam.</li>
+    <li>Saída de modelo nunca aparece sem a incerteza que a acompanha: faixa entre especificações no simulador, envelope de cenários nas projeções. A palavra <b>intervalo de confiança</b> não é usada onde não há um.</li>
+    <li>Valores estimados pelos modelos ficam nas seções de modelos preditivos e não substituem nenhuma célula <b>sem dado</b> das seções descritivas.</li>
   </ul>
 </section>
 
 <section>
-  <h2>6. Limitações que acompanham qualquer uso</h2>
+  <h2>8. Limitações que acompanham qualquer uso</h2>
   <ul>
     <li><b>Viés de acesso.</b> As bases só registram quem sabe que pode reclamar e consegue chegar ao canal.</li>
     <li><b>Viés de canal.</b> Público mais velho reclama por telefone, público mais jovem por plataforma digital. Isso distorce o ranking de temas em direções opostas.</li>
@@ -157,28 +249,33 @@ footer a{color:var(--p2);text-decoration:none;}
     <li><b>Demografia inexistente.</b> Nenhuma das três fontes publica idade, gênero ou região de quem reclama.</li>
     <li><b>Defasagem.</b> Cerca de dezoito meses entre a camada demográfica e o ranking mais recente.</li>
     <li><b>Lacuna aberta.</b> Queda de 28% no volume do Consumidor.gov.br entre 2023 e 2024 seguida de alta de 137,4% em 2026, sem explicação nas fontes consultadas.</li>
+    <li><b>Modelos sem microdados.</b> O simulador é calibrado em taxas agregadas e assume ausência de interação entre idade, região e CadÚnico. As combinações extremas são as mais dependentes dessa hipótese e devem ser lidas como ordem de grandeza.</li>
+    <li><b>Pesos aproximados.</b> O peso regional usa a população do Censo 2022 como proxy da base de clientes, e o peso do CadÚnico é derivado, não publicado. Gênero não entra no simulador porque o Banco Central não publica inadimplência por gênero.</li>
+    <li><b>Projeções com dois pontos.</b> Sem os anos intermediários, são cenários e não previsões com intervalo de confiança.</li>
   </ul>
 </section>
 </div>
 
 <section>
-  <h2>7. Atualização e manutenção</h2>
+  <h2>9. Atualização e manutenção</h2>
   <table>
     <thead><tr><th>Gatilho</th><th>Frequência</th><th>O que revisar</th><th>Critério de alerta</th></tr></thead>
     <tbody>
-      <tr><td class="k">Ranking do Banco Central</td><td>Trimestral, cerca de 3 semanas após o fechamento</td><td>Bloco do Banco Central e tabela de cruzamento por instituição</td><td>Variação acima de 10 pontos no índice de qualquer instituição</td></tr>
+      <tr><td class="k">Ranking do Banco Central</td><td>Trimestral, cerca de 3 semanas após o fechamento</td><td>Bloco do Banco Central, tabela de cruzamento por instituição e teste de persistência do ranking</td><td>Variação acima de 10 pontos no índice de qualquer instituição. Com a tabela completa de índices de dois trimestres seguidos, refazer o Spearman com n igual a 15</td></tr>
       <tr><td class="k">Consumidor.gov.br</td><td>Mensal</td><td>Índice de solução, nota e volume por instituição</td><td>Queda superior a 5 pontos percentuais no índice de solução</td></tr>
       <tr><td class="k">Reclame Aqui</td><td>Semestral</td><td>Reputação e tempo de resposta das instituições cobertas</td><td>Mudança de posição relativa entre instituições</td></tr>
-      <tr><td class="k">Cidadania Financeira</td><td>Anual</td><td>Todas as personas e todos os recortes demográficos</td><td>Qualquer alteração exige revalidação integral dos três perfis</td></tr>
+      <tr><td class="k">Cidadania Financeira</td><td>Anual</td><td>Todas as personas, todos os recortes demográficos, recalibração do simulador e teste do pré registro das projeções</td><td>Qualquer alteração exige revalidação integral dos três perfis. Na base de dez/2025, medir o erro dos três cenários de 2025 antes de atualizar as projeções</td></tr>
     </tbody>
   </table>
   <div class="rule"><p><b>Regra de versionamento:</b> quando uma fonte publicar dado novo que contradiga o que está no dashboard, a versão anterior não é apagada. O bloco de verificação registra o que mudou e o que foi descartado, para que a leitura antiga continue auditável.</p></div>
 </section>
 
 <footer>
+  <b style="color:var(--ink)">Dashboard:</b>
+  <a href="https://thaynapfreire.github.io/analise-consumidor-bancos/" target="_blank">thaynapfreire.github.io/analise-consumidor-bancos</a>.
   <b style="color:var(--ink)">Fontes primárias:</b>
   Banco Central, Relatório de Cidadania Financeira 2025 · Banco Central, Ranking de Reclamações, 1º e 2º tri 2026 ·
-  Consumidor.gov.br, Senacon/MJSP · Reclame Aqui, páginas públicas de reputação.
+  Consumidor.gov.br, Senacon/MJSP · Reclame Aqui, páginas públicas de reputação · IBGE, Censo Demográfico 2022 (proxy de peso regional).
   <b style="color:var(--ink)">Secundárias que citam a origem oficial:</b>
   Finsiders Brasil (23/04/2026) · Poder360 (23/07/2026) · Consumo em Pauta (21/07/2026).
   <b style="color:var(--ink)">Descartado na verificação:</b>
